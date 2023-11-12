@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "parcel": "parcel ./src/index.html",
+    "dev": "parcel ./src/index.html",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

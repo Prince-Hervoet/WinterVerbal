@@ -1,5 +1,6 @@
-import { degreeToAngle } from "../util/calculate";
+import { degreeToAngle, pointRotate } from "../util/calculate";
 import { Point } from "./someTypes";
+import { Transformer } from "./transformer";
 
 export interface EventCenter {
   on(name: string, handler: Function): void;
@@ -24,10 +25,12 @@ export abstract class VerbalWidget implements EventCenter {
   public boundingBoxPoints: Point[] = [];
   public eventObject: any = {};
   public style: any = {};
+  public transformer: VerbalWidget | null = null;
+  public showTransformer: boolean = false;
 
   constructor(props: any) {
     const self: any = this;
-    const keys = Object.keys(self);
+    const keys = Object.keys(props);
     for (const key of keys) {
       self[key] = props[key] ?? self[key];
     }
@@ -61,6 +64,7 @@ export abstract class VerbalWidget implements EventCenter {
     this._transform(canvasCtx);
     this._setCtxStyle(canvasCtx);
     this._render(canvasCtx);
+    if (this.transformer) this.transformer._render(canvasCtx);
     canvasCtx.restore();
   }
 
@@ -78,11 +82,17 @@ export abstract class VerbalWidget implements EventCenter {
     this.emit("_widget_update", { target, event: "_widget_update" });
   }
 
+  setTransformerActive(isActive: boolean) {
+    this.showTransformer = isActive;
+  }
+
   getPathPoints(): Point[] {
     return this.pathPoints;
   }
 
-  getBoundingBoxPoints() {}
+  getBoundingBoxPoints(): Point[] {
+    return [];
+  }
 
   getWidth() {
     return this.width * this.scaleX;
@@ -100,7 +110,44 @@ export abstract class VerbalWidget implements EventCenter {
   /**
    * 更新控制角顶点数组
    */
-  _updateCornerPoints() {}
+  _updateCornerPoints() {
+    const cornerWidth = this.style.cornerWidth ?? 10;
+    const cornerWidthHalf = cornerWidth >> 1;
+    const cornerHeight = this.style.cornerHeight ?? 10;
+    const cornerHeightHalf = cornerHeight >> 1;
+    // 左上
+    this.cornerPoints[0] = [];
+    this.cornerPoints[0].push(
+      pointRotate(
+        this.x - cornerWidthHalf,
+        this.y - cornerHeightHalf,
+        this.centerX,
+        this.centerY,
+        this.degree
+      ),
+      pointRotate(
+        this.x - cornerWidthHalf + cornerWidth,
+        this.y - cornerHeightHalf,
+        this.centerX,
+        this.centerY,
+        this.degree
+      ),
+      pointRotate(
+        this.x - cornerWidthHalf + cornerWidth,
+        this.y - cornerHeightHalf + cornerHeight,
+        this.centerX,
+        this.centerY,
+        this.degree
+      ),
+      pointRotate(
+        this.x - cornerWidthHalf,
+        this.y - cornerHeightHalf + cornerHeight,
+        this.centerX,
+        this.centerY,
+        this.degree
+      )
+    );
+  }
 
   /**
    * 更新包围盒顶点数组
@@ -141,5 +188,6 @@ export abstract class VerbalWidget implements EventCenter {
     canvasCtx.scale(this.scaleX, this.scaleY); // 缩放
     canvasCtx.translate(this.centerX, this.centerY);
     canvasCtx.rotate(degreeToAngle(this.degree)); // 旋转
+    canvasCtx.translate(-this.centerX, -this.centerY);
   }
 }

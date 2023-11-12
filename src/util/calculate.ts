@@ -29,6 +29,30 @@ export function judgePointOnWidget(
     py2 = pathPoints[i - 1].y;
     if ((py1 <= y && py2 >= y) || (py1 >= y && py2 <= y)) ++count;
   }
+  px1 = pathPoints[0].x;
+  px2 = pathPoints[pathPoints.length - 1].x;
+  if (px1 >= x || px2 >= x) {
+    py1 = pathPoints[0].y;
+    py2 = pathPoints[pathPoints.length - 1].y;
+    if ((py1 <= y && py2 >= y) || (py1 >= y && py2 <= y)) ++count;
+  }
+  return (count & 1) === 1;
+}
+
+export function judgePointOnBounding(x: number, y: number, points: Point[]) {
+  let px1,
+    px2,
+    py1,
+    py2,
+    count = 0;
+  for (let i = 1; i < points.length; ++i) {
+    px1 = points[i].x;
+    px2 = points[i - 1].x;
+    if (px1 < x && px2 < x) continue;
+    py1 = points[i].y;
+    py2 = points[i - 1].y;
+    if ((py1 <= y && py2 >= y) || (py1 >= y && py2 <= y)) ++count;
+  }
   return (count & 1) === 1;
 }
 
@@ -60,4 +84,17 @@ export function pointRotate(
   const x = (nx - ox) * Math.cos(degree) - (ny - oy) * Math.sin(degree) + ox;
   const y = (nx - ox) * Math.sin(degree) + (ny - oy) * Math.cos(degree) + oy;
   return { x, y };
+}
+
+/**
+ * 判断两个包围盒是否重叠
+ * @param widget1
+ * @param widget2
+ */
+export function judgeBoundingBoxOverlap(
+  widget1: VerbalWidget,
+  widget2: VerbalWidget
+) {
+  const boundingBoxPoints1: Point[] = widget1.getBoundingBoxPoints();
+  const boundingBoxPoints2: Point[] = widget2.getBoundingBoxPoints();
 }
