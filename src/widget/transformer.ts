@@ -1,14 +1,17 @@
 import { VerbalWidget } from "./verbalWidget";
 
 export class Transformer extends VerbalWidget {
-  public cornerWidth: number = 10;
-  public cornerHeight: number = 10;
-  public widget: VerbalWidget;
+  public cornerWidth: number = 20;
+  public cornerHeight: number = 20;
 
   constructor(widget: VerbalWidget) {
-    super({});
-    this.widget = widget;
-    widget.transformer = this;
+    super({
+      x: widget.get("x"),
+      y: widget.get("y"),
+      width: widget.getWidth(),
+      height: widget.getHeight(),
+      degree: widget.get("degree"),
+    });
   }
 
   _render(canvasCtx: CanvasRenderingContext2D): void {

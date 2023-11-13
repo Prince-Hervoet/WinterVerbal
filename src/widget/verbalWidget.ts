@@ -25,8 +25,9 @@ export abstract class VerbalWidget implements EventCenter {
   public boundingBoxPoints: Point[] = [];
   public eventObject: any = {};
   public style: any = {};
+  public transformerStyle: any = {};
   public transformer: VerbalWidget | null = null;
-  public showTransformer: boolean = false;
+  public showTransformer: boolean = true;
 
   constructor(props: any) {
     const self: any = this;
@@ -62,9 +63,10 @@ export abstract class VerbalWidget implements EventCenter {
     if (this.width === 0 || this.height === 0) return;
     canvasCtx.save();
     this._transform(canvasCtx);
-    this._setCtxStyle(canvasCtx);
+    this._setCtxStyle(this.style, canvasCtx);
     this._render(canvasCtx);
-    if (this.transformer) this.transformer._render(canvasCtx);
+    this._setCtxStyle(this.transformerStyle, canvasCtx);
+    if (this.showTransformer) this._renderTransformer(canvasCtx);
     canvasCtx.restore();
   }
 
@@ -90,6 +92,10 @@ export abstract class VerbalWidget implements EventCenter {
     return this.pathPoints;
   }
 
+  getCornerPoints() {
+    return this.cornerPoints;
+  }
+
   getBoundingBoxPoints(): Point[] {
     return [];
   }
@@ -102,6 +108,11 @@ export abstract class VerbalWidget implements EventCenter {
     return this.height * this.scaleY;
   }
 
+  get(name: string) {
+    const self: any = this;
+    return self[name];
+  }
+
   /**
    * 更新路径顶点数组
    */
@@ -111,42 +122,59 @@ export abstract class VerbalWidget implements EventCenter {
    * 更新控制角顶点数组
    */
   _updateCornerPoints() {
-    const cornerWidth = this.style.cornerWidth ?? 10;
+    const cornerWidth = this.style.cornerWidth ?? 20;
     const cornerWidthHalf = cornerWidth >> 1;
-    const cornerHeight = this.style.cornerHeight ?? 10;
+    const cornerHeight = this.style.cornerHeight ?? 20;
     const cornerHeightHalf = cornerHeight >> 1;
-    // 左上
-    this.cornerPoints[0] = [];
-    this.cornerPoints[0].push(
-      pointRotate(
-        this.x - cornerWidthHalf,
-        this.y - cornerHeightHalf,
-        this.centerX,
-        this.centerY,
-        this.degree
-      ),
-      pointRotate(
-        this.x - cornerWidthHalf + cornerWidth,
-        this.y - cornerHeightHalf,
-        this.centerX,
-        this.centerY,
-        this.degree
-      ),
-      pointRotate(
-        this.x - cornerWidthHalf + cornerWidth,
-        this.y - cornerHeightHalf + cornerHeight,
-        this.centerX,
-        this.centerY,
-        this.degree
-      ),
-      pointRotate(
-        this.x - cornerWidthHalf,
-        this.y - cornerHeightHalf + cornerHeight,
-        this.centerX,
-        this.centerY,
-        this.degree
-      )
-    );
+    const width = this.getWidth();
+    const height = this.getHeight();
+    const widthHalf = width >> 1;
+    const heightHalf = height >> 1;
+    const dirs = [
+      [0, 0],
+      [widthHalf, 0],
+      [width, 0],
+      [width, heightHalf],
+      [width, height],
+      [widthHalf, height],
+      [0, height],
+      [0, heightHalf],
+    ];
+    for (let i = 0; i < 8; ++i) {
+      this.cornerPoints[i] = [];
+      const x = this.x + dirs[i][0];
+      const y = this.y + dirs[i][1];
+      this.cornerPoints[i].push(
+        pointRotate(
+          x - cornerWidthHalf,
+          y - cornerHeightHalf,
+          this.centerX,
+          this.centerY,
+          this.degree
+        ),
+        pointRotate(
+          x + cornerWidthHalf,
+          y - cornerHeightHalf,
+          this.centerX,
+          this.centerY,
+          this.degree
+        ),
+        pointRotate(
+          x + cornerWidthHalf,
+          y + cornerHeightHalf,
+          this.centerX,
+          this.centerY,
+          this.degree
+        ),
+        pointRotate(
+          x - cornerWidthHalf,
+          y + cornerHeightHalf,
+          this.centerX,
+          this.centerY,
+          this.degree
+        )
+      );
+    }
   }
 
   /**
@@ -166,11 +194,11 @@ export abstract class VerbalWidget implements EventCenter {
    * 设置ctx风格
    * @param canvasCtx
    */
-  _setCtxStyle(canvasCtx: CanvasRenderingContext2D) {
+  _setCtxStyle(style: any, canvasCtx: CanvasRenderingContext2D) {
     const target: any = canvasCtx;
-    const keys = Object.keys(this.style);
+    const keys = Object.keys(style);
     for (const key of keys) {
-      target[key] = this.style[key] ?? target[key];
+      target[key] = style[key] ?? target[key];
     }
   }
 
@@ -189,5 +217,44 @@ export abstract class VerbalWidget implements EventCenter {
     canvasCtx.translate(this.centerX, this.centerY);
     canvasCtx.rotate(degreeToAngle(this.degree)); // 旋转
     canvasCtx.translate(-this.centerX, -this.centerY);
+  }
+
+  _renderTransformer(canvasCtx: CanvasRenderingContext2D) {
+    const cornerWidth = this.style.cornerWidth ?? 20;
+    const cornerWidthHalf = cornerWidth >> 1;
+    const cornerHeight = this.style.cornerHeight ?? 20;
+    const cornerHeightHalf = cornerHeight >> 1;
+    const width = this.getWidth();
+    const height = this.getHeight();
+    const widthHalf = width >> 1;
+    const heightHalf = height >> 1;
+    const dirs = [
+      [0, 0],
+      [widthHalf, 0],
+      [width, 0],
+      [width, heightHalf],
+      [width, height],
+      [widthHalf, height],
+      [0, height],
+      [0, heightHalf],
+    ];
+    canvasCtx.strokeRect(this.x, this.y, width, height);
+    for (let i = 0; i < 8; ++i) {
+      const x = this.x + dirs[i][0];
+      const y = this.y + dirs[i][1];
+      canvasCtx.fillRect(
+        x - cornerWidthHalf,
+        y - cornerHeightHalf,
+        cornerWidth,
+        cornerHeight
+      );
+    }
+    canvasCtx.fillRect(this.x + dirs[1][0], this.y + dirs[1][1], 0.5, -50);
+    canvasCtx.fillRect(
+      this.x + dirs[1][0] - cornerWidthHalf,
+      this.y + dirs[1][1] - 50 - cornerHeightHalf,
+      cornerWidth,
+      cornerHeight
+    );
   }
 }

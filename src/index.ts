@@ -11,6 +11,7 @@ const rect1 = new Rect({
   width: 200,
   height: 200,
   style: { fillStyle: "blue" },
+  transformerStyle: { fillStyle: "red" },
 });
 
 const rect2 = new Rect({
@@ -21,12 +22,7 @@ const rect2 = new Rect({
   style: { fillStyle: "red" },
 });
 
-const rect3 = new Rect({
-  x: 300,
-  y: 100,
-  width: 200,
-  height: 200,
-  style: { strokeStyle: "black" },
-});
+const tr = new Transformer(rect1);
+console.log(rect1);
 
 canvas.place(rect1);

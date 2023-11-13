@@ -16,25 +16,36 @@ export function judgePointOnWidget(
   widget: VerbalWidget
 ): boolean {
   const pathPoints = widget.getPathPoints();
+  return judgePointOnShape(x, y, pathPoints);
+}
+
+/**
+ * 判断点是否在一个图形中
+ * @param x
+ * @param y
+ * @param points
+ * @returns
+ */
+export function judgePointOnShape(x: number, y: number, points: Point[]) {
   let px1,
     px2,
     py1,
     py2,
     count = 0;
-  for (let i = 1; i < pathPoints.length; ++i) {
-    px1 = pathPoints[i].x;
-    px2 = pathPoints[i - 1].x;
+  for (let i = 1; i < points.length; ++i) {
+    px1 = points[i].x;
+    px2 = points[i - 1].x;
     if (px1 < x && px2 < x) continue;
-    py1 = pathPoints[i].y;
-    py2 = pathPoints[i - 1].y;
-    if ((py1 <= y && py2 >= y) || (py1 >= y && py2 <= y)) ++count;
+    py1 = points[i].y;
+    py2 = points[i - 1].y;
+    if ((py1 < y && py2 > y) || (py1 > y && py2 < y)) ++count;
   }
-  px1 = pathPoints[0].x;
-  px2 = pathPoints[pathPoints.length - 1].x;
+  px1 = points[0].x;
+  px2 = points[points.length - 1].x;
   if (px1 >= x || px2 >= x) {
-    py1 = pathPoints[0].y;
-    py2 = pathPoints[pathPoints.length - 1].y;
-    if ((py1 <= y && py2 >= y) || (py1 >= y && py2 <= y)) ++count;
+    py1 = points[0].y;
+    py2 = points[points.length - 1].y;
+    if ((py1 < y && py2 > y) || (py1 > y && py2 < y)) ++count;
   }
   return (count & 1) === 1;
 }
