@@ -1,42 +1,53 @@
 import { VerbalWidget } from "./verbalWidget";
 
 export class Transformer extends VerbalWidget {
-  public cornerWidth: number = 20;
-  public cornerHeight: number = 20;
+  cornerWidth: number = 10;
+  cornerHeight: number = 10;
+  padding: number = 10;
 
-  constructor(widget: VerbalWidget) {
-    super({
-      x: widget.get("x"),
-      y: widget.get("y"),
-      width: widget.getWidth(),
-      height: widget.getHeight(),
-      degree: widget.get("degree"),
-    });
+  constructor(props: any) {
+    super(props);
+    this.cornerWidth = props.cornerWidth ?? this.cornerWidth;
+    this.cornerHeight = props.cornerHeight ?? this.cornerHeight;
+    this.padding = props.padding ?? this.padding;
+    this.x = this.x - this.padding;
+    this.y = this.y - this.padding;
+    this.width = this.width + this.padding * 2;
+    this.height = this.height + this.padding * 2;
   }
 
-  _render(canvasCtx: CanvasRenderingContext2D): void {
+  protected _update(props: any) {
+    this.x = this.x - this.padding;
+    this.y = this.y - this.padding;
+    this.width = this.width + (this.padding << 1);
+    this.height = this.height + (this.padding << 1);
+  }
+
+  protected _render(ctx: CanvasRenderingContext2D) {
     const widthHalf = this.width >> 1;
     const heightHalf = this.height >> 1;
     const cornerWidthHalf = this.cornerWidth >> 1;
     const cornerHeightHalf = this.cornerHeight >> 1;
-    canvasCtx.strokeRect(this.x, this.y, this.width, this.height);
-    canvasCtx.fillRect(
-      this.x - cornerWidthHalf,
-      this.y - cornerHeightHalf,
-      this.cornerWidth,
-      this.cornerHeight
-    );
-    // canvasCtx.fillRect(
-    //   this.x - cornerWidthHalf + widthHalf,
-    //   this.y - cornerHeightHalf,
-    //   this.width,
-    //   this.height
-    // );
-    // canvasCtx.fillRect(this.x, this.y, this.width, this.height);
-    // canvasCtx.fillRect(this.x, this.y, this.width, this.height);
-    // canvasCtx.fillRect(this.x, this.y, this.width, this.height);
-    // canvasCtx.fillRect(this.x, this.y, this.width, this.height);
-    // canvasCtx.fillRect(this.x, this.y, this.width, this.height);
-    // canvasCtx.fillRect(this.x, this.y, this.width, this.height);
+    const dirs = [
+      [0, 0],
+      [widthHalf, 0],
+      [this.width, 0],
+      [this.width, heightHalf],
+      [this.width, this.height],
+      [widthHalf, this.height],
+      [0, this.height],
+      [0, heightHalf],
+    ];
+    ctx.strokeRect(this.x, this.y, this.width, this.height);
+    for (let i = 0; i < dirs.length; ++i) {
+      const x = this.x + dirs[i][0];
+      const y = this.y + dirs[i][1];
+      ctx.fillRect(
+        x - cornerWidthHalf,
+        y - cornerHeightHalf,
+        this.cornerWidth,
+        this.cornerHeight
+      );
+    }
   }
 }

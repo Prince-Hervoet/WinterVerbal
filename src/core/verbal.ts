@@ -1,53 +1,33 @@
-import { CanvasEvent } from "../event/canvasEvent";
+import { Transformer } from "../widget/transformer";
 import { VerbalWidget } from "../widget/verbalWidget";
-import { Canvas } from "./canvas";
+import { VerbalCanvas } from "./verbalCanvas";
+import { EventCenter } from "./../event/eventCenter";
 
-export function makeVerbalCanvas(
-  container: HTMLElement,
-  width: number,
-  height: number
-) {
-  if (!container) return;
-  const renderCanvasDom = document.createElement("canvas");
-  const eventCanvasDom = document.createElement("canvas");
-  container.setAttribute(
-    "style",
-    `position: relative; width: ${width}px; height: ${height}px;`
-  );
-  renderCanvasDom.setAttribute("width", width + "");
-  renderCanvasDom.setAttribute("height", height + "");
-  eventCanvasDom.setAttribute("style", `position: absolute; left: 0; top: 0;`);
-  eventCanvasDom.setAttribute("width", width + "");
-  eventCanvasDom.setAttribute("height", height + "");
-  container.appendChild(renderCanvasDom);
-  container.appendChild(eventCanvasDom);
-  const renderCanvas = new Canvas(renderCanvasDom);
-  const eventCanvas = new Canvas(eventCanvasDom);
-  const canvasEvent = new CanvasEvent(container, renderCanvas, eventCanvas);
-  return new VerbalCanvas(container, renderCanvas, eventCanvas, canvasEvent);
-}
-
-class VerbalCanvas {
-  private _container: HTMLElement;
-  private _renderCanvas: Canvas;
-  private _eventCanvas: Canvas;
-  private _canvasEvent: CanvasEvent;
+export class Verbal {
+  private renderCanvas: VerbalCanvas;
+  private eventCanvas: VerbalCanvas;
+  private eventCenter: EventCenter;
 
   constructor(
-    container: HTMLElement,
-    renderCanvas: Canvas,
-    eventCanvas: Canvas,
-    canvasEvent: CanvasEvent
+    renderCanvas: VerbalCanvas,
+    eventCanvas: VerbalCanvas,
+    eventCenter: EventCenter
   ) {
-    this._container = container;
-    this._eventCanvas = eventCanvas;
-    this._renderCanvas = renderCanvas;
-    this._canvasEvent = canvasEvent;
+    this.renderCanvas = renderCanvas;
+    this.eventCanvas = eventCanvas;
+    this.eventCenter = eventCenter;
   }
 
   place(...widgets: VerbalWidget[]) {
-    this._renderCanvas.place(...widgets);
+    for (const widget of widgets) {
+      if (!widget.getTransformer())
+        widget.set("transformer", new Transformer({}));
+      widget.on("_update_watch", (event: any) => {
+        const target: VerbalWidget = event.target;
+        if (this.renderCanvas.has(target)) this.renderCanvas.renderAll();
+        if (this.eventCanvas.has(target)) this.eventCanvas.renderAll();
+      });
+    }
+    this.renderCanvas.place(...widgets);
   }
-
-  remove(...widgets: VerbalWidget[]) {}
 }

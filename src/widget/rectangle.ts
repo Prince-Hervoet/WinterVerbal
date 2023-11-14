@@ -1,19 +1,15 @@
 import { VerbalWidget } from "./verbalWidget";
 
-/**
- * 矩形
- */
-export class Rect extends VerbalWidget {
-  public shapeName: string = "rect";
+export class Rectangle extends VerbalWidget {
+  shapeName: string = "rectangle";
 
-  _render(canvasCtx: CanvasRenderingContext2D): void {
-    if (this.style.fillStyle)
-      canvasCtx.fillRect(this.x, this.y, this.width, this.height);
+  protected _render(ctx: CanvasRenderingContext2D) {
+    ctx.fillRect(this.x, this.y, this.width, this.height);
     if (this.style.strokeStyle)
-      canvasCtx.strokeRect(this.x, this.y, this.width, this.height);
+      ctx.strokeRect(this.x, this.y, this.width, this.height);
   }
 
-  _updatePathPoints(): void {
+  protected _updatePathPoints() {
     this.pathPoints = [];
     this.pathPoints.push({ x: this.x, y: this.y });
     this.pathPoints.push({ x: this.x + this.width, y: this.y });

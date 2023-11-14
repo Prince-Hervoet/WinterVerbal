@@ -1,30 +1,29 @@
-import { judgePointOnShape } from "../util/calculate";
-import { CornerStyleName } from "../widget/someTypes";
-import { CanvasEvent, StateEnum } from "./canvasEvent";
+import { placeHittingState, removeHittingState } from "./common";
+import { EventCenter, StateEnum } from "./eventCenter";
 
-export function mouseMoveHandler(event: MouseEvent, canvasEvent: CanvasEvent) {
-  switch (canvasEvent.getCanvasState()) {
+export function mouseMoveHandler(event: MouseEvent, eventCenter: EventCenter) {
+  switch (eventCenter.getState()) {
     case StateEnum.COMMON:
-      mouseMoveCommon(event, canvasEvent);
+      mouseMoveCommon(event, eventCenter);
       break;
   }
 }
 
-function mouseMoveCommon(event: MouseEvent, canvasEvent: CanvasEvent) {
+function mouseMoveCommon(event: MouseEvent, eventCenter: EventCenter) {
   const { offsetX, offsetY } = event;
-  const widget = canvasEvent.renderCanvas.pointOnWidget(offsetX, offsetY);
+  const widget = eventCenter
+    .getRenderCanvas()
+    .judgePointOnWidget(offsetX, offsetY);
   if (widget) {
-    canvasEvent.container.setAttribute("style", `cursor: pointer;`);
-    const cornerPoints = widget.getCornerPoints();
-    for (let i = 0; i < cornerPoints.length; ++i) {
-      if (judgePointOnShape(offsetX, offsetY, cornerPoints[i])) {
-        console.log(i);
-        const styleName = (CornerStyleName as any)[i + ""];
-        canvasEvent.container.setAttribute("style", `cursor: ${styleName};`);
-        break;
-      }
-    }
+    eventCenter.setHovering(widget);
+    const oldStyle: string = eventCenter.getEventDom().getAttribute("style")!;
+    eventCenter.getEventDom().setAttribute("oldStyle", oldStyle);
+    eventCenter.getEventDom().setAttribute("style", oldStyle + `cursor: grab;`);
   } else {
-    canvasEvent.container.setAttribute("style", `cursor: default;`);
+    eventCenter.setHovering(null);
+    const oldStyle: string = eventCenter
+      .getEventDom()
+      .getAttribute("oldStyle")!;
+    eventCenter.getEventDom().setAttribute("style", oldStyle);
   }
 }
