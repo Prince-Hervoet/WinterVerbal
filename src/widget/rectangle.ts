@@ -4,7 +4,8 @@ export class Rectangle extends VerbalWidget {
   shapeName: string = "rectangle";
 
   protected _render(ctx: CanvasRenderingContext2D) {
-    ctx.fillRect(this.x, this.y, this.width, this.height);
+    if (this.style.fillStyle)
+      ctx.fillRect(this.x, this.y, this.width, this.height);
     if (this.style.strokeStyle)
       ctx.strokeRect(this.x, this.y, this.width, this.height);
   }

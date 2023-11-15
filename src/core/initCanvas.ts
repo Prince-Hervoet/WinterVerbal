@@ -16,6 +16,7 @@ export function initCanvas(
 
   renderCanvasDom.setAttribute("width", width + "");
   renderCanvasDom.setAttribute("height", height + "");
+  renderCanvasDom.setAttribute("style", "background-color: #ccc;");
   eventCanvasDom.setAttribute("width", width + "");
   eventCanvasDom.setAttribute("height", height + "");
   eventCanvasDom.setAttribute("style", `position: absolute; left: 0; top: 0;`);

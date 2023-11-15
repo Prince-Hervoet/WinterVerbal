@@ -10,20 +10,18 @@ const rect1 = new Rectangle({
   width: 200,
   height: 200,
   style: { fillStyle: "blue", strokeStyle: "red" },
-  transformerStyle: { padding: 10 },
 });
 
-const tr = new Transformer({
-  x: 100,
-  y: 100,
-  width: 100,
-  height: 100,
-  cornerWidth: 10,
-  cornerHeight: 10,
-});
+console.log(rect1);
+
+// const rect2 = new Rectangle({
+//   x: 500,
+//   y: 400,
+//   width: 200,
+//   height: 200,
+//   style: { fillStyle: "blue", strokeStyle: "red" },
+// });
 
 canvas.place(rect1);
 
-rect1.update({ x: 200, y: 200 });
-
-console.log(rect1.stringify());
+// console.log(rect1.stringify());

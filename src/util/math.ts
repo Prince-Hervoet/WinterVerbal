@@ -20,6 +20,19 @@ export function judgePointOnShape(x: number, y: number, points: Point[]) {
   return (count & 1) === 1;
 }
 
+/**
+ * 角度转弧度
+ * @param degree
+ * @returns
+ */
 export function degreeToAngle(degree: number) {
   return (degree * Math.PI) / 180;
+}
+
+export function boxSelectCalPos(p1: Point, p2: Point) {
+  const x = Math.min(p1.x, p2.x),
+    y = Math.min(p1.y, p2.y);
+  const width = Math.max(p1.x, p2.x) - x,
+    height = Math.max(p1.y, p2.y) - y;
+  return { x, y, width, height };
 }

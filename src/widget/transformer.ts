@@ -3,7 +3,9 @@ import { VerbalWidget } from "./verbalWidget";
 export class Transformer extends VerbalWidget {
   cornerWidth: number = 10;
   cornerHeight: number = 10;
-  padding: number = 10;
+  padding: number = 5;
+
+  style: any = { fillStyle: "#00BFFF", strokeStyle: "#00BFFF" };
 
   constructor(props: any) {
     super(props);

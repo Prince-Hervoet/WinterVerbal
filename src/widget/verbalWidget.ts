@@ -43,15 +43,16 @@ export abstract class VerbalWidget implements EventApi {
 
   transformer: Transformer | null = null; // 该部件携带的变换器
 
-  style: any = {};
+  style: any = { fillStyle: "blue" };
 
-  transformerStyle: any = {};
+  transformerStyle: any = { fillStyle: "#8DEEEE" };
 
   constructor(props: any) {
     this._initProps(props);
     this._updateCenterPoint();
     this._updatePathPoints();
     this._updateCornerPoints();
+    this._updateTransformer();
   }
 
   on(name: string, handler: Function): void {
@@ -85,17 +86,8 @@ export abstract class VerbalWidget implements EventApi {
     this._updateCenterPoint();
     this._updatePathPoints();
     this._updateCornerPoints();
+    this._updateTransformer();
     this._update(props);
-
-    if (this.transformer)
-      this.transformer.update({
-        x: this.x,
-        y: this.y,
-        width: this.width * this.scaleX,
-        height: this.height * this.scaleY,
-        degree: this.degree,
-        style: this.transformerStyle,
-      });
     const self = this;
     this.emit("_update_watch", {
       target: self,
@@ -116,8 +108,22 @@ export abstract class VerbalWidget implements EventApi {
     return this.pathPoints;
   }
 
+  getCornerPoints() {
+    return this.cornerPoints;
+  }
+
   getTransformer() {
     return this.transformer;
+  }
+
+  getBoundingBoxPosition() {
+    return {
+      x: this.x,
+      y: this.y,
+      width: this.width * this.scaleX,
+      height: this.height * this.scaleY,
+      degree: this.degree,
+    };
   }
 
   stringify(): string {
@@ -173,7 +179,7 @@ export abstract class VerbalWidget implements EventApi {
   }
 
   protected _updateCornerPoints() {
-    const padding = this.transformerStyle.padding ?? 10;
+    const padding = this.transformerStyle.padding ?? 5;
     const x = this.x - padding,
       y = this.y - padding;
     const width = this.width + (padding << 1),
@@ -187,11 +193,11 @@ export abstract class VerbalWidget implements EventApi {
     const dirs = [
       [0, 0],
       [widthHalf, 0],
-      [this.width, 0],
-      [this.width, heightHalf],
-      [this.width, this.height],
-      [widthHalf, this.height],
-      [0, this.height],
+      [width, 0],
+      [width, heightHalf],
+      [width, height],
+      [widthHalf, height],
+      [0, height],
       [0, heightHalf],
     ];
     for (let i = 0; i < dirs.length; ++i) {
@@ -203,6 +209,18 @@ export abstract class VerbalWidget implements EventApi {
       this.cornerPoints[i].push({ x: nx + cornerWidth, y: ny + cornerHeight });
       this.cornerPoints[i].push({ x: nx, y: ny + cornerHeight });
     }
+  }
+
+  protected _updateTransformer() {
+    if (this.transformer)
+      this.transformer.update({
+        x: this.x,
+        y: this.y,
+        width: this.width,
+        height: this.height,
+        degree: this.degree,
+        style: this.transformerStyle,
+      });
   }
 
   protected _updatePathPoints() {}

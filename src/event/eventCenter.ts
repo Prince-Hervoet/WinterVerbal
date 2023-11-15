@@ -1,7 +1,9 @@
 import { VerbalCanvas } from "../core/verbalCanvas";
-import { VerbalWidget } from "../widget/verbalWidget";
+import { Rectangle } from "../widget/rectangle";
+import { Point, VerbalWidget } from "../widget/verbalWidget";
 import { mouseDownHandler } from "./mouseDown";
 import { mouseMoveHandler } from "./mouseMove";
+import { mouseUpHandler } from "./mouseUp";
 
 export const StateEnum = {
   COMMON: 0,
@@ -9,7 +11,19 @@ export const StateEnum = {
   CATCHING: 2,
   DRAGGING: 3,
   BOXSELECT: 4,
+  TRANSFORM: 10,
 };
+
+export const TransformDirs = [
+  "nw-resize",
+  "n-resize",
+  "ne-resize",
+  "e-resize",
+  "se-resize",
+  "s-resize",
+  "sw-resize",
+  "w-resize",
+];
 
 export class EventCenter {
   private eventDom: HTMLElement;
@@ -20,6 +34,19 @@ export class EventCenter {
   private hitting: VerbalWidget | null = null;
   private catching: VerbalWidget | null = null;
   private dragging: VerbalWidget | null = null;
+
+  private mouseDownPoint: Point = { x: 0, y: 0 };
+  private mouseDownOffset: Point = { x: 0, y: 0 };
+
+  private transformDir: string = "";
+
+  public hoveringFlag: VerbalWidget = new Rectangle({
+    style: { strokeStyle: "#00BFFF", lineWidth: 2 },
+  });
+
+  public boxSelectFlag: VerbalWidget = new Rectangle({
+    style: { fillStyle: "rgba(0, 0, 255, 0.2)" },
+  });
 
   constructor(
     eventDom: HTMLElement,
@@ -40,10 +67,18 @@ export class EventCenter {
     this.eventDom.addEventListener("mousedown", (event) => {
       mouseDownHandler(event, this);
     });
+
+    this.eventDom.addEventListener("mouseup", (event) => {
+      mouseUpHandler(event, this);
+    });
   }
 
   getState() {
     return this.state;
+  }
+
+  setState(state: number) {
+    this.state = state;
   }
 
   getRenderCanvas() {
@@ -100,5 +135,29 @@ export class EventCenter {
     this.renderCanvas.setIsRender(widget, true);
     this.renderCanvas.renderAll();
     this.eventCanvas.remove(widget);
+  }
+
+  getMouseDownPoint() {
+    return this.mouseDownPoint;
+  }
+
+  setMouseDownPoint(point: Point) {
+    this.mouseDownPoint = point;
+  }
+
+  getMouseDownOffset() {
+    return this.mouseDownOffset;
+  }
+
+  setMouseDownOffset(offset: Point) {
+    this.mouseDownOffset = offset;
+  }
+
+  getTransformDir() {
+    return this.transformDir;
+  }
+
+  setTransformDir(dir: string) {
+    this.transformDir = dir;
   }
 }

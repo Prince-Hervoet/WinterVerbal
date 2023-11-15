@@ -55,8 +55,6 @@ export class VerbalCanvas {
     while (cursor !== tail) {
       if (cursor.isRender) {
         const widget = cursor.widget!;
-        console.log(widget);
-
         widget.render(this.canvasCtx);
       }
       cursor = cursor.next!;
@@ -64,12 +62,15 @@ export class VerbalCanvas {
   }
 
   remove(...widgets: VerbalWidget[]) {
+    let isRemove = false;
     for (const widget of widgets) {
       const node = this.widgetToNode.get(widget);
       if (!node) continue;
+      isRemove = true;
       this.widgetToNode.delete(widget);
       this.renderList.remove(node);
     }
+    if (!isRemove) return;
     this.renderAll();
   }
 
@@ -82,10 +83,15 @@ export class VerbalCanvas {
   clear() {
     this.eraseAll();
     this.renderList.clear();
+    this.widgetToNode.clear();
   }
 
   eraseAll() {
     this.canvasCtx.clearRect(0, 0, this.canvasDom.width, this.canvasDom.height);
+  }
+
+  size() {
+    return this.widgetToNode.size;
   }
 }
 
