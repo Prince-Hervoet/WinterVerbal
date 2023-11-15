@@ -1,3 +1,5 @@
+import { boxSelectCalPos, boxSelectGroupPos } from "../util/math";
+import { placeHittingState, removeHittingState } from "./common";
 import { EventCenter, StateEnum } from "./eventCenter";
 
 export function mouseUpHandler(event: MouseEvent, eventCenter: EventCenter) {
@@ -33,11 +35,32 @@ function mouseUpCatching(event: MouseEvent, eventCenter: EventCenter) {
 }
 
 function mouseUpBoxSelect(event: MouseEvent, eventCenter: EventCenter) {
+  const { offsetX, offsetY } = event;
+  const mouseDownPoint = eventCenter.getMouseDownPoint();
+  const { x, y, width, height } = boxSelectCalPos(
+    { x: offsetX, y: offsetY },
+    mouseDownPoint
+  );
+  const widgets = eventCenter.getRenderCanvas().judgeBoxSelect([
+    { x, y },
+    { x: x + width, y },
+    { x: x + width, y: y + height },
+    { x, y: y + height },
+  ]);
+  console.log(widgets);
   eventCenter.getEventCanvas().clear();
   eventCenter.setHovering(null);
   eventCenter.setHitting(null);
   eventCenter.setCatching(null);
-  eventCenter.setState(StateEnum.COMMON);
+  if (widgets.length === 1) {
+    eventCenter.setHitting(widgets[0]);
+    placeHittingState(widgets[0], eventCenter);
+    eventCenter.setState(StateEnum.HIITING);
+  } else if (widgets.length > 1) {
+    eventCenter.setState(StateEnum.COMMON);
+  } else {
+    eventCenter.setState(StateEnum.COMMON);
+  }
 }
 
 function mouseUpTransform(event: MouseEvent, eventCenter: EventCenter) {

@@ -14,14 +14,31 @@ const rect1 = new Rectangle({
 
 console.log(rect1);
 
-// const rect2 = new Rectangle({
-//   x: 500,
-//   y: 400,
-//   width: 200,
-//   height: 200,
-//   style: { fillStyle: "blue", strokeStyle: "red" },
-// });
+const rect2 = new Rectangle({
+  x: 500,
+  y: 400,
+  width: 200,
+  height: 200,
+  style: { fillStyle: "blue", strokeStyle: "red" },
+});
 
-canvas.place(rect1);
+const rect3 = new Rectangle({
+  x: 500,
+  y: 400,
+  width: 200,
+  height: 200,
+  style: { fillStyle: "blue", strokeStyle: "red" },
+});
+
+for (let i = 0; i < 20; ++i) {
+  const rect = new Rectangle({
+    x: 500,
+    y: 400,
+    width: 200,
+    height: 200,
+    style: { fillStyle: "blue", strokeStyle: "red" },
+  });
+  canvas.place(rect);
+}
 
 // console.log(rect1.stringify());

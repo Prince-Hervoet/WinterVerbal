@@ -1,4 +1,4 @@
-import { degreeToAngle } from "../util/math";
+import { degreeToAngle, pointRotateTo } from "../util/math";
 import { Transformer } from "./transformer";
 
 /**
@@ -126,6 +126,31 @@ export abstract class VerbalWidget implements EventApi {
     };
   }
 
+  getBoundingBoxPoints(): Point[] {
+    return [
+      pointRotateTo(
+        { x: this.x, y: this.y },
+        { x: this.centerX, y: this.centerY },
+        this.degree
+      ),
+      pointRotateTo(
+        { x: this.x + this.width, y: this.y },
+        { x: this.centerX, y: this.centerY },
+        this.degree
+      ),
+      pointRotateTo(
+        { x: this.x + this.width, y: this.y + this.height },
+        { x: this.centerX, y: this.centerY },
+        this.degree
+      ),
+      pointRotateTo(
+        { x: this.x, y: this.y + this.height },
+        { x: this.centerX, y: this.centerY },
+        this.degree
+      ),
+    ];
+  }
+
   stringify(): string {
     const info = {
       x: this.x,
@@ -222,6 +247,8 @@ export abstract class VerbalWidget implements EventApi {
         style: this.transformerStyle,
       });
   }
+
+  protected _updateBoundingBoxPoints() {}
 
   protected _updatePathPoints() {}
 }

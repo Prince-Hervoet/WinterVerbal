@@ -1,4 +1,4 @@
-import { Point } from "../widget/verbalWidget";
+import { Point, VerbalWidget } from "../widget/verbalWidget";
 
 /**
  * 判断点是否在图形中
@@ -35,4 +35,32 @@ export function boxSelectCalPos(p1: Point, p2: Point) {
   const width = Math.max(p1.x, p2.x) - x,
     height = Math.max(p1.y, p2.y) - y;
   return { x, y, width, height };
+}
+
+export function pointRotateTo(p: Point, op: Point, degree: number) {
+  const x =
+    (p.x - op.x) * Math.cos(degree) - (p.y - op.y) * Math.sin(degree) + op.x;
+  const y =
+    (p.x - op.x) * Math.sin(degree) + (p.y - op.y) * Math.cos(degree) + op.y;
+  return { x, y };
+}
+
+/**
+ * 判断框选重叠情况
+ * @param target 目标矩形 -- 可能有旋转
+ * @param box 框选框 -- 不会有旋转
+ */
+export function boxSelectJudge(target: Point[], box: Point[]) {
+  for (const point of target) {
+    if (point.x < box[0].x || point.x > box[1].x) return false;
+    if (point.y < box[0].y || point.y > box[2].y) return false;
+  }
+  return true;
+}
+
+export function boxSelectGroupPos(widgets: VerbalWidget[]) {
+  const p1: Point[] = widgets[0].getBoundingBoxPoints();
+
+  for (const widget of widgets) {
+  }
 }

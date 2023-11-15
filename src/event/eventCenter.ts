@@ -125,16 +125,16 @@ export class EventCenter {
     this.dragging = widget;
   }
 
-  transferToEventCanvas(widget: VerbalWidget) {
-    this.renderCanvas.setIsRender(widget, false);
+  transferToEventCanvas(...widgets: VerbalWidget[]) {
+    for (const widget of widgets) this.renderCanvas.setIsRender(widget, false);
     this.renderCanvas.renderAll();
-    this.eventCanvas.place(widget);
+    this.eventCanvas.place(...widgets);
   }
 
-  transferToRenderCanvas(widget: VerbalWidget) {
-    this.renderCanvas.setIsRender(widget, true);
+  transferToRenderCanvas(...widgets: VerbalWidget[]) {
+    for (const widget of widgets) this.renderCanvas.setIsRender(widget, true);
     this.renderCanvas.renderAll();
-    this.eventCanvas.remove(widget);
+    this.eventCanvas.remove(...widgets);
   }
 
   getMouseDownPoint() {

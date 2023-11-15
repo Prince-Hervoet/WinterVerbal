@@ -1,7 +1,9 @@
 import { VerbalWidget } from "./verbalWidget";
 
 class Group extends VerbalWidget {
-  public members: VerbalWidget[] = [];
+  shapeName: string = "group";
+
+  members: VerbalWidget[] = [];
 
   protected _update(props: any) {
     this.members.forEach((member: VerbalWidget) => {

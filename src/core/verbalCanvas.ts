@@ -1,5 +1,9 @@
-import { judgePointOnShape } from "../util/math";
-import { VerbalWidget } from "../widget/verbalWidget";
+import {
+  boxSelectGroupPos,
+  boxSelectJudge,
+  judgePointOnShape,
+} from "../util/math";
+import { Point, VerbalWidget } from "../widget/verbalWidget";
 
 export class VerbalCanvas {
   private canvasDom: HTMLCanvasElement;
@@ -25,6 +29,22 @@ export class VerbalCanvas {
       cursor = cursor.prev!;
     }
     return null;
+  }
+
+  judgeBoxSelect(box: Point[]): VerbalWidget[] {
+    const ans: VerbalWidget[] = [];
+    const head = this.renderList.getHead();
+    let cursor = this.renderList.getTail();
+    cursor = cursor.prev!;
+    while (cursor !== head) {
+      if (cursor.isRender) {
+        const widget = cursor.widget!;
+        if (boxSelectJudge(widget.getBoundingBoxPoints(), box))
+          ans.push(widget);
+      }
+      cursor = cursor.prev!;
+    }
+    return ans;
   }
 
   has(widget: VerbalWidget): boolean {
