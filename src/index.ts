@@ -30,7 +30,7 @@ const rect3 = new Rectangle({
   style: { fillStyle: "blue", strokeStyle: "red" },
 });
 
-for (let i = 0; i < 20; ++i) {
+for (let i = 0; i < 100; ++i) {
   const rect = new Rectangle({
     x: 500,
     y: 400,
