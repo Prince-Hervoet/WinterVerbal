@@ -51,5 +51,11 @@ export class Transformer extends VerbalWidget {
         this.cornerHeight
       );
     }
+    ctx.fillRect(
+      this.x + widthHalf - cornerWidthHalf,
+      this.y - 30,
+      this.cornerWidth,
+      this.cornerHeight
+    );
   }
 }

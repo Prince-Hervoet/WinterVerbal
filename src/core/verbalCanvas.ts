@@ -48,7 +48,9 @@ export class VerbalCanvas {
   }
 
   has(widget: VerbalWidget): boolean {
-    return this.widgetToNode.has(widget);
+    const node = this.widgetToNode.get(widget);
+    if (node && node.isRender) return true;
+    return false;
   }
 
   place(...widgets: VerbalWidget[]) {

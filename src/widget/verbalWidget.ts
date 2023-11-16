@@ -82,12 +82,12 @@ export abstract class VerbalWidget implements EventApi {
   }
 
   update(props: any) {
+    this._update(props);
     this._initProps(props);
     this._updateCenterPoint();
     this._updatePathPoints();
     this._updateCornerPoints();
     this._updateTransformer();
-    this._update(props);
     const self = this;
     this.emit("_update_watch", {
       target: self,

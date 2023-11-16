@@ -7,6 +7,7 @@ export class Verbal {
   private renderCanvas: VerbalCanvas;
   private eventCanvas: VerbalCanvas;
   private eventCenter: EventCenter;
+  private isPendingRender: boolean = false;
 
   constructor(
     renderCanvas: VerbalCanvas,
@@ -20,14 +21,16 @@ export class Verbal {
 
   place(...widgets: VerbalWidget[]) {
     for (const widget of widgets) {
-      // if (!widget.getTransformer()) {
-      //   const pos = widget.getBoundingBoxPosition();
-      //   widget.set("transformer", new Transformer(pos));
-      // }
+      if (!widget) continue;
       widget.on("_update_watch", (event: any) => {
-        const target: VerbalWidget = event.target;
-        if (this.renderCanvas.has(target)) this.renderCanvas.renderAll();
-        if (this.eventCanvas.has(target)) this.eventCanvas.renderAll();
+        if (this.isPendingRender) return;
+        this.isPendingRender = true;
+        requestAnimationFrame(() => {
+          const target: VerbalWidget = event.target;
+          if (this.renderCanvas.has(target)) this.renderCanvas.renderAll();
+          if (this.eventCanvas.has(target)) this.eventCanvas.renderAll();
+          this.isPendingRender = false;
+        });
       });
     }
     this.renderCanvas.place(...widgets);
