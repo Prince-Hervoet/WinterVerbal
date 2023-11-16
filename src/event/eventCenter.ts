@@ -1,5 +1,7 @@
 import { VerbalCanvas } from "../core/verbalCanvas";
+import { Group } from "../widget/group";
 import { Rectangle } from "../widget/rectangle";
+import { Transformer } from "../widget/transformer";
 import { Point, VerbalWidget } from "../widget/verbalWidget";
 import { mouseDownHandler } from "./mouseDown";
 import { mouseMoveHandler } from "./mouseMove";
@@ -47,6 +49,10 @@ export class EventCenter {
   public boxSelectFlag: VerbalWidget = new Rectangle({
     style: { fillStyle: "rgba(0, 0, 255, 0.2)" },
   });
+
+  public gTransformer: Transformer = new Transformer({});
+
+  public gGroup: Group = new Group({});
 
   constructor(
     eventDom: HTMLElement,

@@ -12,8 +12,6 @@ const rect1 = new Rectangle({
   style: { fillStyle: "blue", strokeStyle: "red" },
 });
 
-console.log(rect1);
-
 const rect2 = new Rectangle({
   x: 500,
   y: 400,
@@ -30,7 +28,7 @@ const rect3 = new Rectangle({
   style: { fillStyle: "blue", strokeStyle: "red" },
 });
 
-for (let i = 0; i < 100; ++i) {
+for (let i = 0; i < 2; ++i) {
   const rect = new Rectangle({
     x: 500,
     y: 400,
@@ -38,6 +36,8 @@ for (let i = 0; i < 100; ++i) {
     height: 200,
     style: { fillStyle: "blue", strokeStyle: "red" },
   });
+  console.log(rect);
+
   canvas.place(rect);
 }
 

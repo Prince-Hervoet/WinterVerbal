@@ -48,11 +48,14 @@ function mouseDownHitting(event: MouseEvent, eventCenter: EventCenter) {
     if (hovering === eventCenter.getHitting()) {
       eventCenter.setCatching(hovering);
     } else {
-      removeHittingState(eventCenter.getHitting()!, eventCenter);
+      const hitting = eventCenter.getHitting()!;
+      removeHittingState(hitting, eventCenter);
       eventCenter.setHitting(hovering);
       eventCenter.setCatching(hovering);
       removeHoveringState(eventCenter);
       placeHittingState(hovering, eventCenter);
+      if (hitting.get("shapeName") === "group")
+        eventCenter.getRenderCanvas().removeWithoutRender(hitting);
     }
     const pos = hovering.getBoundingBoxPosition();
     eventCenter.setMouseDownOffset({

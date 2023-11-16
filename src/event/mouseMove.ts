@@ -86,9 +86,10 @@ function mouseMoveCatching(event: MouseEvent, eventCenter: EventCenter) {
     eventCenter.setState(StateEnum.TRANSFORM);
     return;
   }
-
   eventCenter.setDragging(widget);
-  eventCenter.transferToEventCanvas(widget);
+  if (widget.get("shapeName") === "group")
+    eventCenter.transferToEventCanvas(...widget.get("members"));
+  else eventCenter.transferToEventCanvas(widget);
   const { offsetX, offsetY } = event;
   const offset = eventCenter.getMouseDownOffset();
   widget.update({ x: offsetX - offset.x, y: offsetY - offset.y });
@@ -108,7 +109,7 @@ function mouseMoveTransform(event: MouseEvent, eventCenter: EventCenter) {
   const pos = hitting.getBoundingBoxPosition();
   switch (eventCenter.getTransformDir()) {
     case "n-resize":
-      if (pos.y + pos.height <= 1) {
+      if (pos.height + (pos.y - offsetY) <= 1) {
         eventCenter.setTransformDir("s-resize");
         return;
       }
@@ -121,11 +122,19 @@ function mouseMoveTransform(event: MouseEvent, eventCenter: EventCenter) {
       }
       hitting.update({ height: offsetY - pos.y });
       break;
-    case "e-resize":
-      hitting.update({ width: offsetX - pos.x });
-      break;
     case "w-resize":
+      if (pos.width + (pos.x - offsetX) <= 1) {
+        eventCenter.setTransformDir("e-resize");
+        return;
+      }
       hitting.update({ x: offsetX, width: pos.width + (pos.x - offsetX) });
+      break;
+    case "e-resize":
+      if (offsetX <= pos.x) {
+        eventCenter.setTransformDir("w-resize");
+        return;
+      }
+      hitting.update({ width: offsetX - pos.x });
       break;
     case "nw-resize":
       hitting.update({
@@ -133,6 +142,26 @@ function mouseMoveTransform(event: MouseEvent, eventCenter: EventCenter) {
         y: offsetY,
         width: pos.width + (pos.x - offsetX),
         height: pos.height + (pos.y - offsetY),
+      });
+      break;
+    case "ne-resize":
+      hitting.update({
+        width: offsetX - pos.x,
+        y: offsetY,
+        height: pos.height + (pos.y - offsetY),
+      });
+      break;
+    case "sw-resize":
+      hitting.update({
+        x: offsetX,
+        width: pos.width + (pos.x - offsetX),
+        height: offsetY - pos.y,
+      });
+      break;
+    case "se-resize":
+      hitting.update({
+        width: offsetX - pos.x,
+        height: offsetY - pos.y,
       });
       break;
   }

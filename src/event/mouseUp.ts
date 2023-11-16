@@ -1,4 +1,5 @@
 import { boxSelectCalPos, boxSelectGroupPos } from "../util/math";
+import { Group } from "../widget/group";
 import { placeHittingState, removeHittingState } from "./common";
 import { EventCenter, StateEnum } from "./eventCenter";
 
@@ -23,7 +24,9 @@ export function mouseUpHandler(event: MouseEvent, eventCenter: EventCenter) {
 
 function mouseUpDragging(event: MouseEvent, eventCenter: EventCenter) {
   const dragging = eventCenter.getDragging()!;
-  eventCenter.transferToRenderCanvas(dragging);
+  if (dragging.get("shapeName") === "group")
+    eventCenter.transferToRenderCanvas(...dragging.get("members"));
+  else eventCenter.transferToRenderCanvas(dragging);
   eventCenter.setCatching(null);
   eventCenter.setDragging(null);
   eventCenter.setState(StateEnum.HIITING);
@@ -48,6 +51,12 @@ function mouseUpBoxSelect(event: MouseEvent, eventCenter: EventCenter) {
     { x, y: y + height },
   ]);
   console.log(widgets);
+  const hitting = eventCenter.getHitting();
+  if (hitting) {
+    removeHittingState(hitting, eventCenter);
+    if (hitting.get("shapeName") === "group")
+      eventCenter.getRenderCanvas().removeWithoutRender(hitting);
+  }
   eventCenter.getEventCanvas().clear();
   eventCenter.setHovering(null);
   eventCenter.setHitting(null);
@@ -57,7 +66,12 @@ function mouseUpBoxSelect(event: MouseEvent, eventCenter: EventCenter) {
     placeHittingState(widgets[0], eventCenter);
     eventCenter.setState(StateEnum.HIITING);
   } else if (widgets.length > 1) {
-    eventCenter.setState(StateEnum.COMMON);
+    const { x, y, width, height } = boxSelectGroupPos(widgets);
+    const group = new Group({ x, y, width, height, members: widgets });
+    eventCenter.setHitting(group);
+    eventCenter.getRenderCanvas().add(group);
+    placeHittingState(group, eventCenter);
+    eventCenter.setState(StateEnum.HIITING);
   } else {
     eventCenter.setState(StateEnum.COMMON);
   }

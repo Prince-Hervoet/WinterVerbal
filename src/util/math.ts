@@ -29,6 +29,12 @@ export function degreeToAngle(degree: number) {
   return (degree * Math.PI) / 180;
 }
 
+/**
+ * 框选区域位置计算
+ * @param p1
+ * @param p2
+ * @returns
+ */
 export function boxSelectCalPos(p1: Point, p2: Point) {
   const x = Math.min(p1.x, p2.x),
     y = Math.min(p1.y, p2.y);
@@ -60,7 +66,24 @@ export function boxSelectJudge(target: Point[], box: Point[]) {
 
 export function boxSelectGroupPos(widgets: VerbalWidget[]) {
   const p1: Point[] = widgets[0].getBoundingBoxPoints();
-
-  for (const widget of widgets) {
+  let xmin = p1[0].x,
+    xmax = p1[0].x,
+    ymin = p1[0].y,
+    ymax = p1[0].y;
+  for (let i = 1; i < p1.length; ++i) {
+    xmin = Math.min(xmin, p1[i].x);
+    xmax = Math.max(xmax, p1[i].x);
+    ymin = Math.min(ymin, p1[i].y);
+    ymax = Math.max(ymax, p1[i].y);
   }
+  for (let i = 1; i < widgets.length; ++i) {
+    const p = widgets[i].getBoundingBoxPoints();
+    for (const point of p) {
+      xmin = Math.min(xmin, point.x);
+      xmax = Math.max(xmax, point.x);
+      ymin = Math.min(ymin, point.y);
+      ymax = Math.max(ymax, point.y);
+    }
+  }
+  return { x: xmin, y: ymin, width: xmax - xmin, height: ymax - ymin };
 }

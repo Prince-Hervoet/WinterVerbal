@@ -58,6 +58,7 @@ export class VerbalCanvas {
 
   add(...widgets: VerbalWidget[]) {
     for (const widget of widgets) {
+      if (!widget) continue;
       let node = this.widgetToNode.get(widget);
       if (node) continue;
       node = new WidgetNode();
@@ -92,6 +93,15 @@ export class VerbalCanvas {
     }
     if (!isRemove) return;
     this.renderAll();
+  }
+
+  removeWithoutRender(...widgets: VerbalWidget[]) {
+    for (const widget of widgets) {
+      const node = this.widgetToNode.get(widget);
+      if (!node) continue;
+      this.widgetToNode.delete(widget);
+      this.renderList.remove(node);
+    }
   }
 
   setIsRender(widget: VerbalWidget, isRender: boolean) {
