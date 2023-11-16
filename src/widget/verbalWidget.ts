@@ -247,7 +247,6 @@ export abstract class VerbalWidget implements EventApi {
         width: this.width,
         height: this.height,
         degree: this.degree,
-        style: this.transformerStyle,
       });
   }
 
