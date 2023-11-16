@@ -14,6 +14,7 @@ export class CanvasImg extends VerbalWidget {
     if (this.imgCache) {
       ctx.drawImage(this.imgCache, this.x, this.y, this.width, this.height);
     } else {
+      // 如果没有缓存，则重新加载
       const img = new Image();
       img.src = this.src;
       img.onload = () => {
