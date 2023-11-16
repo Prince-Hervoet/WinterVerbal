@@ -82,12 +82,13 @@ export abstract class VerbalWidget implements EventApi {
   }
 
   update(props: any) {
-    this._update(props);
+    this._updateBefore(props);
     this._initProps(props);
     this._updateCenterPoint();
     this._updatePathPoints();
     this._updateCornerPoints();
     this._updateTransformer();
+    this._updateAfter(props);
     const self = this;
     this.emit("_update_watch", {
       target: self,
@@ -185,7 +186,9 @@ export abstract class VerbalWidget implements EventApi {
     }
   }
 
-  protected _update(props: any) {}
+  protected _updateAfter(props: any) {}
+
+  protected _updateBefore(props: any) {}
 
   protected _setStyle(ctx: CanvasRenderingContext2D) {
     const style: any = this.style;

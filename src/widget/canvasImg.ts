@@ -24,7 +24,7 @@ export class CanvasImg extends VerbalWidget {
     }
   }
 
-  protected _update(props: any) {
+  protected _updateBefore(props: any) {
     if (props.src && props.src !== this.src) {
       this.imgCache = null;
       this.src = props.src;

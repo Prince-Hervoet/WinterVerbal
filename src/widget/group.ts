@@ -20,7 +20,7 @@ export class Group extends VerbalWidget {
     }
   }
 
-  protected _update(props: any) {
+  protected _updateAfter(props: any) {
     this.members.forEach((member: VerbalWidget, index: number) => {
       member.update({
         x: props.x + this.offsets[index].x,

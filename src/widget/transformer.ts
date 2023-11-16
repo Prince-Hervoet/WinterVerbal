@@ -18,7 +18,7 @@ export class Transformer extends VerbalWidget {
     this.height = this.height + this.padding * 2;
   }
 
-  protected _update(props: any) {
+  protected _updateAfter(props: any) {
     this.x = this.x - this.padding;
     this.y = this.y - this.padding;
     this.width = this.width + (this.padding << 1);
