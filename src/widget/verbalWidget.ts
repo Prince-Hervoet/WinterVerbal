@@ -1,4 +1,4 @@
-import { degreeToAngle, pointRotateTo } from "../util/math";
+import { degreeToRadian, pointRotateTo } from "../util/math";
 import { Transformer } from "./transformer";
 
 /**
@@ -18,14 +18,18 @@ interface EventApi {
   delete(name: string): void;
 }
 
+/**
+ * 基本抽象部件
+ */
 export abstract class VerbalWidget implements EventApi {
   // 包围盒基本信息
-  x: number = 0;
-  y: number = 0;
+  x: number = 0; // left
+  y: number = 0; // top
   centerX: number = 0;
   centerY: number = 0;
-  width: number = 0;
-  height: number = 0;
+  centerPoint: Point = { x: 0, y: 0 }; // 中心点信息
+  width: number = 0; // 宽度
+  height: number = 0; // 高度
 
   // 变换信息
   scaleX: number = 1;
@@ -41,9 +45,9 @@ export abstract class VerbalWidget implements EventApi {
 
   eventObject: any = {}; // 事件处理器数组对象
 
-  transformer: Transformer | null = null; // 该部件携带的变换器
+  transformer: Transformer | null = null; // 该部件携带的变换器，如果被设置了这个属性，后面更新的时候会同步更新变换器部件
 
-  style: any = { fillStyle: "blue" };
+  style: any = { fillStyle: "blue" }; // 绘制风格
 
   transformerStyle: any = { fillStyle: "#8DEEEE" };
 
@@ -53,6 +57,7 @@ export abstract class VerbalWidget implements EventApi {
     this._updatePathPoints();
     this._updateCornerPoints();
     this._updateTransformer();
+    this._updateBoundingBoxPoints();
   }
 
   on(name: string, handler: Function): void {
@@ -87,6 +92,8 @@ export abstract class VerbalWidget implements EventApi {
     this._updateCenterPoint();
     this._updatePathPoints();
     this._updateCornerPoints();
+    this._updateBoundingBoxPoints();
+    this._updatePointsRotate();
     this._updateTransformer();
     this._updateAfter(props);
     const self = this;
@@ -121,36 +128,33 @@ export abstract class VerbalWidget implements EventApi {
     return {
       x: this.x,
       y: this.y,
-      width: this.width * this.scaleX,
-      height: this.height * this.scaleY,
+      width: this.width,
+      height: this.height,
       degree: this.degree,
     };
   }
 
-  getBoundingBoxPoints(): Point[] {
-    return [
-      pointRotateTo(
-        { x: this.x, y: this.y },
-        { x: this.centerX, y: this.centerY },
-        this.degree
-      ),
-      pointRotateTo(
-        { x: this.x + this.width, y: this.y },
-        { x: this.centerX, y: this.centerY },
-        this.degree
-      ),
-      pointRotateTo(
-        { x: this.x + this.width, y: this.y + this.height },
-        { x: this.centerX, y: this.centerY },
-        this.degree
-      ),
-      pointRotateTo(
-        { x: this.x, y: this.y + this.height },
-        { x: this.centerX, y: this.centerY },
-        this.degree
-      ),
-    ];
+  getCenterPoint() {
+    return this.centerPoint;
   }
+
+  getBoundingBoxPoints(): Point[] {
+    return this.boundingBoxPoints;
+  }
+
+  getWidth() {
+    return this.width * this.scaleX;
+  }
+
+  getHeight() {
+    return this.height * this.scaleY;
+  }
+
+  protected _render(ctx: CanvasRenderingContext2D) {}
+
+  protected _updateAfter(props: any) {}
+
+  protected _updateBefore(props: any) {}
 
   stringify(): string {
     const info = {
@@ -158,12 +162,10 @@ export abstract class VerbalWidget implements EventApi {
       y: this.y,
       width: this.width,
       height: this.height,
-      centerX: this.centerX,
-      centerY: this.centerY,
+      centerPoint: this.centerPoint,
       shapeName: this.shapeName,
       degree: this.degree,
       style: this.style,
-      transformerStyle: this.transformerStyle,
     };
     return JSON.stringify(info);
   }
@@ -176,19 +178,13 @@ export abstract class VerbalWidget implements EventApi {
     });
   }
 
-  protected _render(ctx: CanvasRenderingContext2D) {}
-
   protected _transform(ctx: CanvasRenderingContext2D) {
     if (this.degree !== 0) {
-      ctx.translate(this.centerX, this.centerY);
-      ctx.rotate(degreeToAngle(this.degree));
-      ctx.translate(-this.centerX, -this.centerY);
+      ctx.translate(this.centerPoint.x, this.centerPoint.y);
+      ctx.rotate(degreeToRadian(this.degree));
+      ctx.translate(-this.centerPoint.x, -this.centerPoint.y);
     }
   }
-
-  protected _updateAfter(props: any) {}
-
-  protected _updateBefore(props: any) {}
 
   protected _setStyle(ctx: CanvasRenderingContext2D) {
     const style: any = this.style;
@@ -200,10 +196,8 @@ export abstract class VerbalWidget implements EventApi {
   }
 
   protected _updateCenterPoint() {
-    const width = this.width * this.scaleX;
-    const height = this.height * this.scaleY;
-    this.centerX = this.x + (width >> 1);
-    this.centerY = this.y + (height >> 1);
+    this.centerPoint.x = this.x + (this.width >> 1);
+    this.centerPoint.y = this.y + (this.height >> 1);
   }
 
   protected _updateCornerPoints() {
@@ -237,6 +231,24 @@ export abstract class VerbalWidget implements EventApi {
       this.cornerPoints[i].push({ x: nx + cornerWidth, y: ny + cornerHeight });
       this.cornerPoints[i].push({ x: nx, y: ny + cornerHeight });
     }
+
+    this.cornerPoints[8] = [];
+    this.cornerPoints[8].push({
+      x: x + widthHalf - cornerWidthHalf,
+      y: y - 30,
+    });
+    this.cornerPoints[8].push({
+      x: x + widthHalf + cornerWidthHalf,
+      y: y - 30,
+    });
+    this.cornerPoints[8].push({
+      x: x + widthHalf + cornerWidthHalf,
+      y: y - 30 + cornerHeight,
+    });
+    this.cornerPoints[8].push({
+      x: x + widthHalf - cornerWidthHalf,
+      y: y - 30 + cornerHeight,
+    });
   }
 
   protected _updateTransformer() {
@@ -244,13 +256,41 @@ export abstract class VerbalWidget implements EventApi {
       this.transformer.update({
         x: this.x,
         y: this.y,
-        width: this.width,
-        height: this.height,
+        width: this.getWidth(),
+        height: this.getHeight(),
         degree: this.degree,
       });
   }
 
-  protected _updateBoundingBoxPoints() {}
+  protected _updateBoundingBoxPoints() {
+    this.boundingBoxPoints = [];
+    this.boundingBoxPoints.push({ x: this.x, y: this.y });
+    this.boundingBoxPoints.push({ x: this.x + this.width, y: this.y });
+    this.boundingBoxPoints.push({
+      x: this.x + this.width,
+      y: this.y + this.height,
+    });
+    this.boundingBoxPoints.push({ x: this.x, y: this.y + this.height });
+  }
 
   protected _updatePathPoints() {}
+
+  protected _updatePointsRotate() {
+    const ps1 = this.pathPoints;
+    for (let i = 0; i < ps1.length; ++i) {
+      ps1[i] = pointRotateTo(ps1[i], this.centerPoint, this.degree);
+    }
+
+    const ps2 = this.cornerPoints;
+    for (const points of ps2) {
+      for (let i = 0; i < points.length; ++i) {
+        points[i] = pointRotateTo(points[i], this.centerPoint, this.degree);
+      }
+    }
+
+    const ps3 = this.boundingBoxPoints;
+    for (let i = 0; i < ps3.length; ++i) {
+      ps3[i] = pointRotateTo(ps3[i], this.centerPoint, this.degree);
+    }
+  }
 }

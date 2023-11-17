@@ -1,4 +1,5 @@
 import { initCanvas } from "./core/initCanvas";
+import { calVectorDegree, fourFiveTo, pointRotateTo } from "./util/math";
 import { CanvasImg } from "./widget/canvasImg";
 import { Rectangle } from "./widget/rectangle";
 import { Transformer } from "./widget/transformer";
@@ -58,5 +59,8 @@ setTimeout(() => {
     src: "https://t7.baidu.com/it/u=1956604245,3662848045&fm=193&f=GIF",
   });
 }, 3000);
+
+console.log(pointRotateTo({ x: 1, y: 0 }, { x: 0, y: 0 }, -90));
+console.log(fourFiveTo(-5.3));
 
 // console.log(rect1.stringify());
