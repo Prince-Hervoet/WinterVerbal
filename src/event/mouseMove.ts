@@ -110,7 +110,9 @@ function mouseMoveCatching(event: MouseEvent, eventCenter: EventCenter) {
   const transformDir = eventCenter.getTransformDir();
   if (transformDir) {
     // 如果是则启动变换
-    eventCenter.transferToEventCanvas(widget);
+    if (widget.get("shapeName") === "group")
+      eventCenter.transferToEventCanvas(...widget.get("members"));
+    else eventCenter.transferToEventCanvas(widget);
     eventCenter.setState(StateEnum.TRANSFORM);
     return;
   }

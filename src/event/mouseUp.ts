@@ -127,7 +127,9 @@ function mouseUpTransform(event: MouseEvent, eventCenter: EventCenter) {
   // 变换过程中放开则是确定变换结果
   const catching = eventCenter.getCatching()!;
   // 将部件传送回渲染层
-  eventCenter.transferToRenderCanvas(catching);
+  if (catching.get("shapeName") === "group")
+    eventCenter.transferToRenderCanvas(...catching.get("members"));
+  else eventCenter.transferToRenderCanvas(catching);
   // 将抓取的部件设置为null
   eventCenter.setCatching(null);
   // 将画布恢复成选中状态
