@@ -1,6 +1,7 @@
 import {
   boxSelectCalPos,
   calVectorDegree,
+  fourFiveTo,
   judgePointOnShape,
 } from "../util/math";
 import { placeHoveringState, removeHoveringState } from "./common";
@@ -180,7 +181,11 @@ function mouseMoveTransform(event: MouseEvent, eventCenter: EventCenter) {
         eventCenter.setTransformDir("w-resize");
         return;
       }
-      hitting.update({ width: offsetX - pos.x });
+      const nWidth = offsetX - pos.x;
+      const scaleX = fourFiveTo(nWidth / pos.width);
+      console.log(hitting);
+
+      hitting.update({ scaleX });
       break;
     case "nw-resize":
       hitting.update({

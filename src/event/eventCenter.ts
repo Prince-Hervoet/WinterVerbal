@@ -17,6 +17,7 @@ export const StateEnum = {
   DRAGGING: 3,
   BOXSELECT: 4,
   TRANSFORM: 10,
+  FREEDRAW: 20,
 };
 
 /**

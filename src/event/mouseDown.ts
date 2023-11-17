@@ -19,6 +19,8 @@ export function mouseDownHandler(event: MouseEvent, eventCenter: EventCenter) {
     case StateEnum.HIITING:
       mouseDownHitting(event, eventCenter);
       break;
+    case StateEnum.FREEDRAW:
+      break;
   }
 }
 
@@ -106,3 +108,5 @@ function mouseDownHitting(event: MouseEvent, eventCenter: EventCenter) {
     eventCenter.setState(StateEnum.BOXSELECT);
   }
 }
+
+function mouseDownFreeDraw(event: MouseEvent, eventCenter: EventCenter) {}

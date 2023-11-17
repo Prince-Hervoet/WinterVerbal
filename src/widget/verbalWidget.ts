@@ -128,8 +128,8 @@ export abstract class VerbalWidget implements EventApi {
     return {
       x: this.x,
       y: this.y,
-      width: this.width,
-      height: this.height,
+      width: this.getWidth(),
+      height: this.getHeight(),
       degree: this.degree,
     };
   }
@@ -160,8 +160,8 @@ export abstract class VerbalWidget implements EventApi {
     const info = {
       x: this.x,
       y: this.y,
-      width: this.width,
-      height: this.height,
+      width: this.getWidth(),
+      height: this.getHeight(),
       centerPoint: this.centerPoint,
       shapeName: this.shapeName,
       degree: this.degree,
@@ -186,6 +186,10 @@ export abstract class VerbalWidget implements EventApi {
     }
   }
 
+  protected _scaleTransform(ctx: CanvasRenderingContext2D) {
+    ctx.scale(this.scaleX, this.scaleY);
+  }
+
   protected _setStyle(ctx: CanvasRenderingContext2D) {
     const style: any = this.style;
     const target: any = ctx;
@@ -196,16 +200,16 @@ export abstract class VerbalWidget implements EventApi {
   }
 
   protected _updateCenterPoint() {
-    this.centerPoint.x = this.x + (this.width >> 1);
-    this.centerPoint.y = this.y + (this.height >> 1);
+    this.centerPoint.x = this.x + (this.getWidth() >> 1);
+    this.centerPoint.y = this.y + (this.getHeight() >> 1);
   }
 
   protected _updateCornerPoints() {
     const padding = this.transformerStyle.padding ?? 5;
     const x = this.x - padding,
       y = this.y - padding;
-    const width = this.width + (padding << 1),
-      height = this.height + (padding << 1),
+    const width = this.getWidth() + (padding << 1),
+      height = this.getHeight() + (padding << 1),
       widthHalf = width >> 1,
       heightHalf = height >> 1;
     const cornerWidth = this.transformerStyle.cornWidth ?? 10;
@@ -265,12 +269,12 @@ export abstract class VerbalWidget implements EventApi {
   protected _updateBoundingBoxPoints() {
     this.boundingBoxPoints = [];
     this.boundingBoxPoints.push({ x: this.x, y: this.y });
-    this.boundingBoxPoints.push({ x: this.x + this.width, y: this.y });
+    this.boundingBoxPoints.push({ x: this.x + this.getWidth(), y: this.y });
     this.boundingBoxPoints.push({
-      x: this.x + this.width,
-      y: this.y + this.height,
+      x: this.x + this.getWidth(),
+      y: this.y + this.getHeight(),
     });
-    this.boundingBoxPoints.push({ x: this.x, y: this.y + this.height });
+    this.boundingBoxPoints.push({ x: this.x, y: this.y + this.getHeight() });
   }
 
   protected _updatePathPoints() {}
