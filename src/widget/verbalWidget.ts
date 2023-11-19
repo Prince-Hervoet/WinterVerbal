@@ -105,8 +105,13 @@ export abstract class VerbalWidget implements EventApi {
    */
   update(props: any) {
     const oldDegree = this.degree;
+    const oldWidth = this.width;
+    const oldHeight = this.height;
     this._initProps(props); // 将新值赋到对象上
-    if (this.degree !== 0 && (props.width || props.height)) {
+    if (
+      this.degree !== 0 &&
+      (props.width !== oldWidth || props.height !== oldHeight)
+    ) {
       // 如果当前图形有旋转，并且更新了宽高，那么需要重新计算旋转中心
       let { width, height } = props;
       width = width ?? this.width;

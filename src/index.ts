@@ -30,21 +30,28 @@ const rect3 = new Rectangle({
   style: { fillStyle: "blue", strokeStyle: "red" },
 });
 
-const rect = new Rectangle({
-  x: 300,
-  y: 400,
-  width: 200,
-  height: 200,
-  // degree: 30,
-  style: { fillStyle: "blue", strokeStyle: "red" },
-});
-console.log(rect);
+// const rect = new Rectangle({
+//   x: 300,
+//   y: 400,
+//   width: 200,
+//   height: 200,
+//   degree: 30,
+//   style: { fillStyle: "blue", strokeStyle: "red" },
+// });
+// console.log(rect);
 
-canvas.place(rect);
-// setTimeout(() => {
-//   rect.update({ width: 240 });
-//   console.log(rect);
-// }, 2000);
+// canvas.place(rect);
+
+const imgTest = new CanvasImg({
+  x: 300,
+  y: 300,
+  width: 400,
+  height: 400,
+  src: "https://t7.baidu.com/it/u=4198287529,2774471735&fm=193&f=GIF",
+});
+
+console.log(imgTest);
+canvas.place(imgTest);
 
 // console.log(pointRotateTo({ x: 1, y: 0 }, { x: 0, y: 0 }, -90));
 // console.log(fourFiveTo(-5.3));
