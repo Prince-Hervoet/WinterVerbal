@@ -47,6 +47,7 @@ function mouseDownCommon(event: MouseEvent, eventCenter: EventCenter) {
     // 设置画布状态为抓取
     eventCenter.setState(StateEnum.CATCHING);
   } else {
+    removeHoveringState(eventCenter);
     // 如果鼠标没有悬停在任何一个部件上，那就认为是要框选
     // 设置鼠标按下的坐标，为后面框选框的计算做准备
     eventCenter.setMouseDownPoint({ x: event.offsetX, y: event.offsetY });

@@ -154,6 +154,8 @@ function mouseMoveTransform(event: MouseEvent, eventCenter: EventCenter) {
   const { offsetX, offsetY } = event;
   const hitting = eventCenter.getHitting()!;
   const pos = hitting.getBoundingBoxPosition();
+  const originPoints = hitting.getBoundingBoxPoints();
+  let flagX, flagY;
   switch (eventCenter.getTransformDir()) {
     case "n-resize":
       if (pos.height + (pos.y - offsetY) <= 1) {
@@ -167,7 +169,8 @@ function mouseMoveTransform(event: MouseEvent, eventCenter: EventCenter) {
         eventCenter.setTransformDir("n-resize");
         return;
       }
-      hitting.update({ height: offsetY - pos.y });
+      flagY = (originPoints[0].y + originPoints[1].y) >> 1;
+      hitting.update({ height: offsetY - flagY });
       break;
     case "w-resize":
       if (pos.width + (pos.x - offsetX) <= 1) {
@@ -181,11 +184,8 @@ function mouseMoveTransform(event: MouseEvent, eventCenter: EventCenter) {
         eventCenter.setTransformDir("w-resize");
         return;
       }
-      const nWidth = offsetX - pos.x;
-      const scaleX = fourFiveTo(nWidth / pos.width);
-      console.log(hitting);
-
-      hitting.update({ scaleX });
+      flagX = (originPoints[0].x + originPoints[3].x) >> 1;
+      hitting.update({ width: offsetX - flagX });
       break;
     case "nw-resize":
       hitting.update({
@@ -203,6 +203,7 @@ function mouseMoveTransform(event: MouseEvent, eventCenter: EventCenter) {
       });
       break;
     case "sw-resize":
+      flagY = (originPoints[0].y + originPoints[1].y) >> 1;
       hitting.update({
         x: offsetX,
         width: pos.width + (pos.x - offsetX),
@@ -210,9 +211,11 @@ function mouseMoveTransform(event: MouseEvent, eventCenter: EventCenter) {
       });
       break;
     case "se-resize":
+      flagX = (originPoints[0].x + originPoints[3].x) >> 1;
+      flagY = (originPoints[0].y + originPoints[1].y) >> 1;
       hitting.update({
-        width: offsetX - pos.x,
-        height: offsetY - pos.y,
+        width: offsetX - flagX,
+        height: offsetY - flagY,
       });
       break;
     case "grabbing":

@@ -1,3 +1,4 @@
+import { pointRotateTo } from "../util/math";
 import { VerbalWidget } from "./verbalWidget";
 
 export class Transformer extends VerbalWidget {
@@ -12,17 +13,18 @@ export class Transformer extends VerbalWidget {
     this.cornerWidth = props.cornerWidth ?? this.cornerWidth;
     this.cornerHeight = props.cornerHeight ?? this.cornerHeight;
     this.padding = props.padding ?? this.padding;
-    this.x = this.x - this.padding;
-    this.y = this.y - this.padding;
     this.width = this.width + this.padding * 2;
     this.height = this.height + this.padding * 2;
   }
 
-  protected _updateAfter(props: any) {
-    this.x = this.x - this.padding;
-    this.y = this.y - this.padding;
-    this.width = this.width + (this.padding << 1);
-    this.height = this.height + (this.padding << 1);
+  update(props: any): void {
+    this._initProps(props); // 将新值赋到对象上
+    this._updateBoundingBoxPoints(); // 更新包围盒点
+    this._updateCenterPoint();
+    const self = this;
+    this.emit("_update_watch", {
+      target: self,
+    });
   }
 
   protected _render(ctx: CanvasRenderingContext2D) {
@@ -42,11 +44,11 @@ export class Transformer extends VerbalWidget {
     ];
     ctx.strokeRect(this.x, this.y, this.width, this.height);
     for (let i = 0; i < dirs.length; ++i) {
-      const x = this.x + dirs[i][0];
-      const y = this.y + dirs[i][1];
+      const nx = this.x + dirs[i][0];
+      const ny = this.y + dirs[i][1];
       ctx.fillRect(
-        x - cornerWidthHalf,
-        y - cornerHeightHalf,
+        nx - cornerWidthHalf,
+        ny - cornerHeightHalf,
         this.cornerWidth,
         this.cornerHeight
       );

@@ -1,5 +1,6 @@
 import { VerbalCanvas } from "../core/verbalCanvas";
 import { Group } from "../widget/group";
+import { HoveringBox } from "../widget/hoveringBox";
 import { Rectangle } from "../widget/rectangle";
 import { Transformer } from "../widget/transformer";
 import { Point, VerbalWidget } from "../widget/verbalWidget";
@@ -56,7 +57,7 @@ export class EventCenter {
   /**
    * 全局悬停部件 -- 用于鼠标悬停时的显示
    */
-  public hoveringFlag: VerbalWidget = new Rectangle({
+  public hoveringFlag: VerbalWidget = new HoveringBox({
     style: { strokeStyle: "#00BFFF", lineWidth: 2 },
   });
 

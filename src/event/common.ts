@@ -25,8 +25,13 @@ export function placeHittingState(
   eventCenter: EventCenter
 ) {
   if (!target) return;
-  const pos = target.getBoundingBoxPosition();
-  eventCenter.gTransformer.update(pos);
+  const { x, y, width, height } = target.getBoundingBoxPosition();
+  eventCenter.gTransformer.update({
+    x: x - 5,
+    y: y - 5,
+    width: width + 10,
+    height: height + 10,
+  });
   target.set("transformer", eventCenter.gTransformer);
   const tr = target.getTransformer();
   if (tr) eventCenter.getEventCanvas().place(tr);
