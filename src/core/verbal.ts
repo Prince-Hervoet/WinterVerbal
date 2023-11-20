@@ -3,6 +3,9 @@ import { VerbalWidget } from "../widget/verbalWidget";
 import { VerbalCanvas } from "./verbalCanvas";
 import { EventCenter } from "./../event/eventCenter";
 
+/**
+ * 可操作类，其中包含各个画布的操作类
+ */
 export class Verbal {
   private renderCanvas: VerbalCanvas;
   private eventCanvas: VerbalCanvas;

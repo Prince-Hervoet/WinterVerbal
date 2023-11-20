@@ -2,6 +2,13 @@ import { EventCenter } from "../event/eventCenter";
 import { Verbal } from "./verbal";
 import { VerbalCanvas } from "./verbalCanvas";
 
+/**
+ * 初始化画布，传入一个容器DOM，会自动生成两个canvas DOM，并返回一个可操作对象
+ * @param container
+ * @param width
+ * @param height
+ * @returns
+ */
 export function initCanvas(
   container: HTMLElement,
   width: number,

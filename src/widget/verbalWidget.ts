@@ -141,6 +141,14 @@ export abstract class VerbalWidget implements EventApi {
     });
   }
 
+  clearBaseInfo() {
+    this.x = 0;
+    this.y = 0;
+    this.width = 0;
+    this.height = 0;
+    this.degree = 0;
+  }
+
   /**
    * 设置某个属性
    * @param key

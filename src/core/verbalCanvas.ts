@@ -5,11 +5,14 @@ import {
 } from "../util/math";
 import { Point, VerbalWidget } from "../widget/verbalWidget";
 
+/**
+ * 画布操作类
+ */
 export class VerbalCanvas {
-  private canvasDom: HTMLCanvasElement;
-  private canvasCtx: CanvasRenderingContext2D;
-  private renderList: RenderList;
-  private widgetToNode: Map<VerbalWidget, WidgetNode> = new Map();
+  private canvasDom: HTMLCanvasElement; // 画布DOM
+  private canvasCtx: CanvasRenderingContext2D; // 上下文
+  private renderList: RenderList; // 渲染列表 -- 使用双向链表，为了方便前后随意遍历和层级关系
+  private widgetToNode: Map<VerbalWidget, WidgetNode> = new Map(); // 部件指针到渲染节点的映射关系
 
   constructor(canvasDom: HTMLCanvasElement) {
     this.canvasDom = canvasDom;
@@ -131,6 +134,9 @@ export class VerbalCanvas {
   }
 }
 
+/**
+ * 渲染节点类
+ */
 class WidgetNode {
   next: WidgetNode | null = null;
   prev: WidgetNode | null = null;
@@ -138,6 +144,9 @@ class WidgetNode {
   isRender: boolean = true;
 }
 
+/**
+ * 双向链表类 -- 低封装程度，为了上面的api方便直接操作
+ */
 class RenderList {
   private head: WidgetNode;
   private tail: WidgetNode;

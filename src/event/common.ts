@@ -19,6 +19,7 @@ export function placeHoveringState(
   pos.y = pos.y - 2;
   pos.width = pos.width + 4;
   pos.height = pos.height + 4;
+  hoveringFlag.clearBaseInfo();
   hoveringFlag.update(pos);
   eventCenter.getEventCanvas().place(hoveringFlag);
 }
@@ -43,19 +44,14 @@ export function placeHittingState(
   eventCenter: EventCenter
 ) {
   if (!target) return;
-  const { x, y, width, height } = target.getBoundingBoxPosition();
-  eventCenter.gTransformer.update({
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-    degree: 0,
-  });
+  const { x, y, width, height, degree } = target.getBoundingBoxPosition();
+  eventCenter.gTransformer.clearBaseInfo();
   eventCenter.gTransformer.update({
     x: x - 5,
     y: y - 5,
     width: width + 10,
     height: height + 10,
+    degree,
   });
   // 设置绑定关系
   target.set("transformer", eventCenter.gTransformer);
