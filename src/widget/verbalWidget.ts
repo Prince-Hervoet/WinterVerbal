@@ -134,6 +134,7 @@ export abstract class VerbalWidget implements EventApi {
     this._updateCornerPoints(); // 更新控制角点
     this._updatePointsRotate(); // 将点数组进行旋转调整
     this._updateTransformer(); // 更新变换器
+    this._updateAfter(props);
     const self = this;
     this.emit("_update_watch", {
       target: self,

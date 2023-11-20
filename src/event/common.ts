@@ -45,6 +45,13 @@ export function placeHittingState(
   if (!target) return;
   const { x, y, width, height } = target.getBoundingBoxPosition();
   eventCenter.gTransformer.update({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+    degree: 0,
+  });
+  eventCenter.gTransformer.update({
     x: x - 5,
     y: y - 5,
     width: width + 10,

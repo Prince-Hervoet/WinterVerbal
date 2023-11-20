@@ -80,6 +80,7 @@ function mouseUpBoxSelect(event: MouseEvent, eventCenter: EventCenter) {
   const hitting = eventCenter.getHitting();
   if (hitting) {
     // 如果当前有选中的部件，则清除掉
+    removeHittingState(hitting, eventCenter);
     // 如果是组，则还需要把临时组部件从渲染层上删除（放到渲染层是因为要响应事件）
     if (hitting.get("shapeName") === "group")
       eventCenter.getRenderCanvas().removeWithoutRender(hitting);
