@@ -44,7 +44,7 @@ for (let i = 0; i < 2; ++i) {
   canvas.place(rect);
 }
 
-canvas.freeDraw({ strokeStyle: "green", lineWidth: 3 });
+// canvas.freeDraw({ strokeStyle: "green", lineWidth: 3 });
 
 // const imgTest = new CanvasImg({
 //   x: 300,

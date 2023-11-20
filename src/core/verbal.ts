@@ -22,6 +22,10 @@ export class Verbal {
     this.eventCenter = eventCenter;
   }
 
+  /**
+   * 放置部件 -- 会自动加上更新监听函数
+   * @param widgets
+   */
   place(...widgets: VerbalWidget[]) {
     for (const widget of widgets) {
       if (!widget) continue;
@@ -39,6 +43,23 @@ export class Verbal {
     this.renderCanvas.place(...widgets);
   }
 
+  /**
+   * 移除部件
+   * @param widgets
+   */
+  remove(...widgets: VerbalWidget[]) {
+    for (const widget of widgets) {
+      if (!widget) continue;
+      widget.delete("_update_watch");
+      this.eventCanvas.remove(widget);
+      this.renderCanvas.remove(widget);
+    }
+  }
+
+  /**
+   * 将画布转成自由绘画模式
+   * @param style
+   */
   freeDraw(style: any) {
     this.eventCenter.setState(StateEnum.FREEDRAW);
     this.eventCenter.setFreeDrawStyle(style);

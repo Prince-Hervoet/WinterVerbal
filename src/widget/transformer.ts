@@ -1,4 +1,3 @@
-import { rotatePoint } from "../util/math";
 import { VerbalWidget } from "./verbalWidget";
 
 export class Transformer extends VerbalWidget {
