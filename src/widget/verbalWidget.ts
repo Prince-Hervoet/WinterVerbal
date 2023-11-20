@@ -290,6 +290,7 @@ export abstract class VerbalWidget implements EventApi {
       this.cornerPoints[i].push({ x: nx, y: ny + cornerHeight });
     }
 
+    // 旋转控制角
     this.cornerPoints[8] = [];
     this.cornerPoints[8].push({
       x: x + widthHalf - cornerWidthHalf,
