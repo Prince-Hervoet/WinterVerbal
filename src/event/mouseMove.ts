@@ -3,6 +3,7 @@ import {
   calVectorDegree,
   degreeToRadian,
   judgePointOnShape,
+  rotatePoint,
 } from "../util/math";
 import { placeHoveringState, removeHoveringState } from "./common";
 import { EventCenter, StateEnum, TransformDirs } from "./eventCenter";
@@ -157,39 +158,52 @@ function mouseMoveTransform(event: MouseEvent, eventCenter: EventCenter) {
   const { offsetX, offsetY } = event;
   const hitting = eventCenter.getHitting()!;
   const pos = hitting.getBoundingBoxPosition();
-  const originPoints = hitting.getBoundingBoxPoints();
-  let flagX, flagY;
+  const boundingBoxPoints = hitting.getBoundingBoxPoints();
+  let flagX, flagY, nPoint;
   switch (eventCenter.getTransformDir()) {
     case "n-resize":
-      if (pos.height + (pos.y - offsetY) <= 1) {
+      nPoint = rotatePoint(
+        { x: offsetX, y: offsetY },
+        hitting.getCenterPoint(),
+        -pos.degree
+      );
+      if (pos.height + pos.y - nPoint.y <= 1) {
         eventCenter.setTransformDir("s-resize");
         return;
       }
-      hitting.update({ y: offsetY, height: pos.height + (pos.y - offsetY) });
+      hitting.update({ y: nPoint.y, height: pos.height + pos.y - nPoint.y });
       break;
     case "s-resize":
       if (offsetY <= pos.y) {
         eventCenter.setTransformDir("n-resize");
         return;
       }
-      flagY = (originPoints[0].y + originPoints[1].y) >> 1;
+      flagY = (boundingBoxPoints[0].y + boundingBoxPoints[1].y) >> 1;
       hitting.update({
         height: (offsetY - flagY) / Math.cos(degreeToRadian(pos.degree)),
       });
       break;
     case "w-resize":
-      if (pos.width + (pos.x - offsetX) <= 1) {
+      nPoint = rotatePoint(
+        { x: offsetX, y: offsetY },
+        hitting.getCenterPoint(),
+        -pos.degree
+      );
+      if (pos.width + pos.x - nPoint.x <= 1) {
         eventCenter.setTransformDir("e-resize");
         return;
       }
-      hitting.update({ x: offsetX, width: pos.width + (pos.x - offsetX) });
+      hitting.update({
+        x: nPoint.x,
+        width: pos.width + pos.x - nPoint.x,
+      });
       break;
     case "e-resize":
       if (offsetX <= pos.x) {
         eventCenter.setTransformDir("w-resize");
         return;
       }
-      flagX = (originPoints[0].x + originPoints[3].x) >> 1;
+      flagX = (boundingBoxPoints[0].x + boundingBoxPoints[3].x) >> 1;
       hitting.update({
         width: (offsetX - flagX) / Math.cos(degreeToRadian(pos.degree)),
       });
@@ -210,7 +224,7 @@ function mouseMoveTransform(event: MouseEvent, eventCenter: EventCenter) {
       });
       break;
     case "sw-resize":
-      flagY = (originPoints[0].y + originPoints[1].y) >> 1;
+      flagY = (boundingBoxPoints[0].y + boundingBoxPoints[1].y) >> 1;
       hitting.update({
         x: offsetX,
         width: pos.width + (pos.x - offsetX),
@@ -218,8 +232,8 @@ function mouseMoveTransform(event: MouseEvent, eventCenter: EventCenter) {
       });
       break;
     case "se-resize":
-      flagX = (originPoints[0].x + originPoints[3].x) >> 1;
-      flagY = (originPoints[0].y + originPoints[1].y) >> 1;
+      flagX = (boundingBoxPoints[0].x + boundingBoxPoints[3].x) >> 1;
+      flagY = (boundingBoxPoints[0].y + boundingBoxPoints[1].y) >> 1;
       const rad = degreeToRadian(pos.degree);
       const tempCos = Math.cos(degreeToRadian(rad));
       hitting.update({
