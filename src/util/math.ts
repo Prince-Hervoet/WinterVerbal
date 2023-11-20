@@ -1,5 +1,11 @@
 import { Point, VerbalWidget } from "../widget/verbalWidget";
-import { Vector2 } from "./types";
+
+export class Vector2 {
+  x: number = 0;
+  y: number = 0;
+}
+
+const RAD_FLAG = Math.PI / 180;
 
 /**
  * 判断点是否在图形中
@@ -40,7 +46,7 @@ export function judgePointOnShape(px: number, py: number, points: Point[]) {
  * @returns
  */
 export function degreeToRadian(degree: number) {
-  return (degree * Math.PI) / 180;
+  return fourFiveTo(degree * RAD_FLAG);
 }
 
 /**
@@ -66,8 +72,10 @@ export function boxSelectCalPos(p1: Point, p2: Point) {
  */
 export function rotatePoint(p: Point, op: Point, degree: number) {
   const rad = degreeToRadian(degree);
-  const x = (p.x - op.x) * Math.cos(rad) - (p.y - op.y) * Math.sin(rad) + op.x;
-  const y = (p.x - op.x) * Math.sin(rad) + (p.y - op.y) * Math.cos(rad) + op.y;
+  const sinRad = Math.sin(rad);
+  const cosRad = Math.cos(rad);
+  const x = (p.x - op.x) * cosRad - (p.y - op.y) * sinRad + op.x;
+  const y = (p.x - op.x) * sinRad + (p.y - op.y) * cosRad + op.y;
   return { x: fourFiveTo(x), y: fourFiveTo(y) };
 }
 

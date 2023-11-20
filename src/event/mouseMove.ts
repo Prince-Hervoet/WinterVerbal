@@ -2,7 +2,6 @@ import {
   boxSelectCalPos,
   calVectorDegree,
   degreeToRadian,
-  fourFiveTo,
   judgePointOnShape,
 } from "../util/math";
 import { placeHoveringState, removeHoveringState } from "./common";
