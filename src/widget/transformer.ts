@@ -1,7 +1,8 @@
-import { pointRotateTo } from "../util/math";
+import { rotatePoint } from "../util/math";
 import { VerbalWidget } from "./verbalWidget";
 
 export class Transformer extends VerbalWidget {
+  shapeName: string = "transformer";
   cornerWidth: number = 10;
   cornerHeight: number = 10;
   padding: number = 5;

@@ -19,6 +19,7 @@ export const StateEnum = {
   BOXSELECT: 4,
   TRANSFORM: 10,
   FREEDRAW: 20,
+  DRAWING: 21,
 };
 
 /**
@@ -77,6 +78,8 @@ export class EventCenter {
    * 全局部件组
    */
   public gGroup: Group = new Group({});
+
+  public freeDrawStyle: any = {};
 
   constructor(
     eventDom: HTMLElement,
@@ -153,6 +156,10 @@ export class EventCenter {
 
   setDragging(widget: VerbalWidget | null) {
     this.dragging = widget;
+  }
+
+  setFreeDrawStyle(style: any) {
+    this.freeDrawStyle = style;
   }
 
   /**

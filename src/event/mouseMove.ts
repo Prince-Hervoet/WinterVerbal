@@ -1,6 +1,7 @@
 import {
   boxSelectCalPos,
   calVectorDegree,
+  degreeToRadian,
   fourFiveTo,
   judgePointOnShape,
 } from "../util/math";
@@ -26,6 +27,9 @@ export function mouseMoveHandler(event: MouseEvent, eventCenter: EventCenter) {
       break;
     case StateEnum.BOXSELECT:
       mouseMoveBoxSelect(event, eventCenter);
+      break;
+    case StateEnum.DRAWING:
+      mouseMoveDrawing(event, eventCenter);
       break;
   }
 }
@@ -170,7 +174,9 @@ function mouseMoveTransform(event: MouseEvent, eventCenter: EventCenter) {
         return;
       }
       flagY = (originPoints[0].y + originPoints[1].y) >> 1;
-      hitting.update({ height: offsetY - flagY });
+      hitting.update({
+        height: (offsetY - flagY) / Math.cos(degreeToRadian(pos.degree)),
+      });
       break;
     case "w-resize":
       if (pos.width + (pos.x - offsetX) <= 1) {
@@ -185,7 +191,9 @@ function mouseMoveTransform(event: MouseEvent, eventCenter: EventCenter) {
         return;
       }
       flagX = (originPoints[0].x + originPoints[3].x) >> 1;
-      hitting.update({ width: offsetX - flagX });
+      hitting.update({
+        width: (offsetX - flagX) / Math.cos(degreeToRadian(pos.degree)),
+      });
       break;
     case "nw-resize":
       hitting.update({
@@ -213,9 +221,11 @@ function mouseMoveTransform(event: MouseEvent, eventCenter: EventCenter) {
     case "se-resize":
       flagX = (originPoints[0].x + originPoints[3].x) >> 1;
       flagY = (originPoints[0].y + originPoints[1].y) >> 1;
+      const rad = degreeToRadian(pos.degree);
+      const tempCos = Math.cos(degreeToRadian(rad));
       hitting.update({
-        width: offsetX - flagX,
-        height: offsetY - flagY,
+        width: (offsetX - flagX + Math.sin(rad) * (pos.height >> 1)) / tempCos,
+        height: (offsetY - flagY - Math.sin(rad) * (pos.width >> 1)) / tempCos,
       });
       break;
     case "grabbing":
@@ -248,3 +258,5 @@ function mouseMoveBoxSelect(event: MouseEvent, eventCenter: EventCenter) {
   boxSelectFlag.update({ x, y, width, height });
   eventCenter.getEventCanvas().place(boxSelectFlag);
 }
+
+function mouseMoveDrawing(event: MouseEvent, eventCenter: EventCenter) {}

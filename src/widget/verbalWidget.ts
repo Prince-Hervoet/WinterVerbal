@@ -1,4 +1,4 @@
-import { degreeToRadian, pointRotateTo as rotatePoint } from "../util/math";
+import { degreeToRadian, rotatePoint as rotatePoint } from "../util/math";
 import { Transformer } from "./transformer";
 
 /**
@@ -110,35 +110,51 @@ export abstract class VerbalWidget implements EventApi {
     this._initProps(props); // 将新值赋到对象上
     if (
       this.degree !== 0 &&
-      (props.width !== oldWidth || props.height !== oldHeight)
+      (this.width !== oldWidth || this.height !== oldHeight)
     ) {
       // 如果当前图形有旋转，并且更新了宽高，那么需要重新计算旋转中心
-      let { width, height } = props;
-      width = width ?? this.width;
-      height = height ?? this.height;
-      let nPoint = { x: this.x + (width >> 1), y: this.y + (height >> 1) };
-      nPoint = rotatePoint(nPoint, this.centerPoint, oldDegree);
-      this.x = nPoint.x - (width >> 1);
-      this.y = nPoint.y - (height >> 1);
+      const { width, height } = props;
+      const widthHalf = width ? width >> 1 : this.width >> 1;
+      const heightHalf = height ? height >> 1 : this.height >> 1;
+      // 算出新的中心点位置
+      const nPoint = rotatePoint(
+        { x: this.x + widthHalf, y: this.y + heightHalf },
+        this.centerPoint,
+        oldDegree
+      );
+      // 校准包围盒定位
+      this.x = nPoint.x - widthHalf;
+      this.y = nPoint.y - heightHalf;
     }
+    // 如果上面进行了修正操作，则下面所有的更新都会基于最新的xy信息
+
     this._updateBoundingBoxPoints(); // 更新包围盒点
-    this._updateCenterPoint(); // 更新中心点
+    this._updateCenterPoint(); // 更新中心点 -- 只是更新中心的xy坐标，没有进行旋转
     this._updatePathPoints(); // 更新路径点
     this._updateCornerPoints(); // 更新控制角点
     this._updatePointsRotate(); // 将点数组进行旋转调整
-    this._updateTransformer();
-    this._updateAfter(props);
+    this._updateTransformer(); // 更新变换器
     const self = this;
     this.emit("_update_watch", {
       target: self,
     });
   }
 
+  /**
+   * 设置某个属性
+   * @param key
+   * @param value
+   */
   set(key: string, value: any) {
     const self: any = this;
     self[key] = value;
   }
 
+  /**
+   * 获取某个值
+   * @param key
+   * @returns
+   */
   get(key: string) {
     const self: any = this;
     return self[key];
@@ -156,6 +172,10 @@ export abstract class VerbalWidget implements EventApi {
     return this.transformer;
   }
 
+  /**
+   * 获取包围盒位置信息（旋转是绕着中心点旋转）
+   * @returns
+   */
   getBoundingBoxPosition() {
     return {
       x: this.x,
@@ -184,12 +204,11 @@ export abstract class VerbalWidget implements EventApi {
 
   stringify(): string {
     const info = {
+      shapeName: this.shapeName,
       x: this.x,
       y: this.y,
       width: this.width,
       height: this.height,
-      centerPoint: this.centerPoint,
-      shapeName: this.shapeName,
       degree: this.degree,
       style: this.style,
     };
@@ -204,6 +223,10 @@ export abstract class VerbalWidget implements EventApi {
     });
   }
 
+  /**
+   * 绘制前进行变换
+   * @param ctx
+   */
   protected _transform(ctx: CanvasRenderingContext2D) {
     if (this.degree !== 0) {
       ctx.translate(this.centerPoint.x, this.centerPoint.y);
@@ -224,7 +247,6 @@ export abstract class VerbalWidget implements EventApi {
   protected _updateCenterPoint() {
     this.centerPoint.x = this.x + (this.width >> 1);
     this.centerPoint.y = this.y + (this.height >> 1);
-    // console.log(this.centerPoint);
   }
 
   protected _updateCornerPoints() {

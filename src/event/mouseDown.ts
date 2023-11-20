@@ -20,6 +20,7 @@ export function mouseDownHandler(event: MouseEvent, eventCenter: EventCenter) {
       mouseDownHitting(event, eventCenter);
       break;
     case StateEnum.FREEDRAW:
+      mouseDownFreeDraw(event, eventCenter);
       break;
   }
 }
@@ -110,4 +111,18 @@ function mouseDownHitting(event: MouseEvent, eventCenter: EventCenter) {
   }
 }
 
-function mouseDownFreeDraw(event: MouseEvent, eventCenter: EventCenter) {}
+function mouseDownFreeDraw(event: MouseEvent, eventCenter: EventCenter) {
+  // 按下时记录鼠标的位置
+  const { offsetX, offsetY } = event;
+  eventCenter.setMouseDownPoint({ x: offsetX, y: offsetY });
+  eventCenter.setState(StateEnum.DRAWING);
+  // 设置风格
+  const eventCanvas = eventCenter.getEventCanvas();
+  eventCanvas.clear();
+  const ctx = eventCanvas.getCtx();
+  ctx.save();
+  if (eventCenter.freeDrawStyle.strokeStyle)
+    ctx.strokeStyle = eventCenter.freeDrawStyle.strokeStyle;
+  ctx.beginPath();
+  ctx.moveTo(offsetX, offsetY);
+}

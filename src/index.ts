@@ -1,9 +1,11 @@
 import { initCanvas } from "./core/initCanvas";
-import { calVectorDegree, fourFiveTo, pointRotateTo } from "./util/math";
+import { makeRoughCanvas } from "./thirdParty/roughCanvas";
+import { calVectorDegree, fourFiveTo, rotatePoint } from "./util/math";
 import { CanvasImg } from "./widget/canvasImg";
 import { Rectangle } from "./widget/rectangle";
 import { Transformer } from "./widget/transformer";
 const dom = document.getElementById("a")!;
+const testDom = document.getElementById("test")!;
 const canvas = initCanvas(dom, 1000, 1000);
 
 const rect1 = new Rectangle({
@@ -57,3 +59,6 @@ canvas.place(imgTest);
 // console.log(fourFiveTo(-5.3));
 
 // console.log(rect1.stringify());
+
+const rc = makeRoughCanvas(testDom as HTMLCanvasElement);
+rc.line(80, 120, 300, 100, { bowing: 1, stroke: "green", strokeWidth: 4 }); // x1, y1, x2, y2

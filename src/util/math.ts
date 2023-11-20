@@ -64,7 +64,7 @@ export function boxSelectCalPos(p1: Point, p2: Point) {
  * @param degree
  * @returns
  */
-export function pointRotateTo(p: Point, op: Point, degree: number) {
+export function rotatePoint(p: Point, op: Point, degree: number) {
   const rad = degreeToRadian(degree);
   const x = (p.x - op.x) * Math.cos(rad) - (p.y - op.y) * Math.sin(rad) + op.x;
   const y = (p.x - op.x) * Math.sin(rad) + (p.y - op.y) * Math.cos(rad) + op.y;

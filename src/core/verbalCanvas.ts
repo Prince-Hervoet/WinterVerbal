@@ -125,6 +125,10 @@ export class VerbalCanvas {
   size() {
     return this.widgetToNode.size;
   }
+
+  getCtx() {
+    return this.canvasCtx;
+  }
 }
 
 class WidgetNode {

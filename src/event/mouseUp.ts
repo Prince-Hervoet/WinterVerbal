@@ -19,6 +19,8 @@ export function mouseUpHandler(event: MouseEvent, eventCenter: EventCenter) {
     case StateEnum.BOXSELECT:
       mouseUpBoxSelect(event, eventCenter);
       break;
+    case StateEnum.DRAWING:
+      break;
   }
 }
 
@@ -132,4 +134,12 @@ function mouseUpTransform(event: MouseEvent, eventCenter: EventCenter) {
   eventCenter.setCatching(null);
   // 将画布恢复成选中状态
   eventCenter.setState(StateEnum.HIITING);
+}
+
+function mouseUpDrawing(event: MouseEvent, eventCenter: EventCenter) {
+  // 放置自由绘画图形
+  // 恢复现场
+  const eventCanvas = eventCenter.getEventCanvas();
+  const ctx = eventCanvas.getCtx();
+  ctx.restore();
 }
