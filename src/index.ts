@@ -38,7 +38,7 @@ for (let i = 0; i < 2; ++i) {
     y: 400,
     width: 200,
     height: 200,
-    style: { fillStyle: "blue", strokeStyle: "red" },
+    style: { fillStyle: "rgb(178, 242, 187)", strokeStyle: "white" },
   });
 
   canvas.place(rect);
