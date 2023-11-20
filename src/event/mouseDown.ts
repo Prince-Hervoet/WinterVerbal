@@ -120,9 +120,12 @@ function mouseDownFreeDraw(event: MouseEvent, eventCenter: EventCenter) {
   const eventCanvas = eventCenter.getEventCanvas();
   eventCanvas.clear();
   const ctx = eventCanvas.getCtx();
+  console.log("adfdsaf");
+
   ctx.save();
-  if (eventCenter.freeDrawStyle.strokeStyle)
-    ctx.strokeStyle = eventCenter.freeDrawStyle.strokeStyle;
+  ctx.strokeStyle = eventCenter.freeDrawStyle.strokeStyle ?? ctx.strokeStyle;
+  ctx.lineWidth = eventCenter.freeDrawStyle.lineWidth ?? ctx.lineWidth;
+
   ctx.beginPath();
   ctx.moveTo(offsetX, offsetY);
 }

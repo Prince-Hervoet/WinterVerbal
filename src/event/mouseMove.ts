@@ -259,4 +259,10 @@ function mouseMoveBoxSelect(event: MouseEvent, eventCenter: EventCenter) {
   eventCenter.getEventCanvas().place(boxSelectFlag);
 }
 
-function mouseMoveDrawing(event: MouseEvent, eventCenter: EventCenter) {}
+function mouseMoveDrawing(event: MouseEvent, eventCenter: EventCenter) {
+  const { offsetX, offsetY } = event;
+  const ctx = eventCenter.getEventCanvas().getCtx();
+  ctx.lineTo(offsetX, offsetY);
+  ctx.moveTo(offsetX, offsetY);
+  ctx.stroke();
+}

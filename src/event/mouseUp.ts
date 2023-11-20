@@ -20,6 +20,7 @@ export function mouseUpHandler(event: MouseEvent, eventCenter: EventCenter) {
       mouseUpBoxSelect(event, eventCenter);
       break;
     case StateEnum.DRAWING:
+      mouseUpDrawing(event, eventCenter);
       break;
   }
 }
@@ -143,4 +144,6 @@ function mouseUpDrawing(event: MouseEvent, eventCenter: EventCenter) {
   const eventCanvas = eventCenter.getEventCanvas();
   const ctx = eventCanvas.getCtx();
   ctx.restore();
+  eventCanvas.clear();
+  eventCenter.setState(StateEnum.FREEDRAW);
 }
