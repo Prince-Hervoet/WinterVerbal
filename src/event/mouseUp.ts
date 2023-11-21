@@ -33,9 +33,15 @@ export function mouseUpHandler(event: MouseEvent, eventCenter: EventCenter) {
 function mouseUpDragging(event: MouseEvent, eventCenter: EventCenter) {
   const dragging = eventCenter.getDragging()!;
   // 如果拖拽的是组，则需要将组内所有部件都传送回渲染层
-  if (dragging.get("shapeName") === "group")
-    eventCenter.transferToRenderCanvas(...dragging.get("members"));
-  else eventCenter.transferToRenderCanvas(dragging);
+  if (dragging.get("shapeName") === "group") {
+    const members = dragging.get("members");
+    for (const widget of members) {
+      widget.update({});
+    }
+    eventCenter.transferToRenderCanvas(...members);
+  } else {
+    eventCenter.transferToRenderCanvas(dragging);
+  }
   // 将拖拽中的部件和抓取的部件设置为null
   eventCenter.setCatching(null);
   eventCenter.setDragging(null);

@@ -9,7 +9,6 @@ export class HoveringBox extends VerbalWidget {
 
   update(props: any): void {
     this._initProps(props); // 将新值赋到对象上
-    this._updateBoundingBoxPoints(); // 更新包围盒点
     this._updateCenterPoint();
     const self = this;
     this.emit("_update_watch", {

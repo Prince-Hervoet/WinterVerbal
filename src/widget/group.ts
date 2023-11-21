@@ -20,13 +20,12 @@ export class Group extends VerbalWidget {
     }
   }
 
-  protected _updateAfter(props: any) {
+  protected _updateAfter(props: any): void {
     this.members.forEach((member: VerbalWidget, index: number) => {
-      member.update({
-        x: props.x + this.offsets[index].x,
-        y: props.y + this.offsets[index].y,
-      });
+      member.set("x", this.x + this.offsets[index].x);
+      member.set("y", this.y + this.offsets[index].y);
     });
+    this.members[0].update({});
   }
 
   protected _updatePathPoints() {

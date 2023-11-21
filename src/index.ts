@@ -32,7 +32,8 @@ const rect3 = new Rectangle({
   style: { fillStyle: "blue", strokeStyle: "red" },
 });
 
-for (let i = 0; i < 2; ++i) {
+const rects = [];
+for (let i = 0; i < 3000; ++i) {
   const rect = new Rectangle({
     x: 300,
     y: 400,
@@ -40,9 +41,9 @@ for (let i = 0; i < 2; ++i) {
     height: 200,
     style: { fillStyle: "rgb(178, 242, 187)", strokeStyle: "white" },
   });
-
-  canvas.place(rect);
+  rects.push(rect);
 }
+canvas.place(...rects);
 
 // canvas.freeDraw({ strokeStyle: "green", lineWidth: 3 });
 
